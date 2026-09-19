@@ -67,6 +67,12 @@ proyecto-bd1-equipo-46/
 - Modelo relacional (pendiente)
 - Normalización (pendiente)
 
+## Diagrama Entidad-Relación
+
+<p align="center">
+  <img src="docs/etapa-02/erdplus%20(4).png" alt="Diagrama Entidad-Relación" width="850">
+</p>
+
 ## Integrantes - Equipo 46
 
 - Espinola Luz
