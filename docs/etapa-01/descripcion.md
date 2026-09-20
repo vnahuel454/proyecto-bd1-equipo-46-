@@ -1,0 +1,5 @@
+Descripción del Caso de Estudio: Supermercado "El Sol"
+
+El Supermercado "El Sol" es un comercio minorista de mediano tamaño que vende productos de consumo masivo, organizados por marca y por categoría (cada producto pertenece a una sola). Se abastece de proveedores externos, y un mismo producto puede ser suministrado por más de uno. Atiende a dos tipos de compradores: clientes registrados en un programa de beneficios y consumidores finales que compran sin registrarse. Todas las ventas se cobran en el local, en cajas atendidas por empleados con rol de cajero.
+
+El supermercado necesita registrar cada venta con el cajero que la atendió, los medios de pago utilizados (efectivo, débito, crédito, transferencia o billetera virtual, pudiendo combinar varios en una misma venta) y los datos del ticket: subtotal, IVA, descuentos e importe total. También necesita controlar el stock de cada producto para saber cuándo reponerlo y conservar el precio cobrado en cada venta, sin que cambios posteriores en el catálogo alteren las ventas ya registradas. Para esto se diseña e implementa una base de datos relacional que organice esta información.
