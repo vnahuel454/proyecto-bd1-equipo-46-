@@ -58,7 +58,7 @@ proyecto-bd1-equipo-46/
 
 ### Etapa 01 - Requerimientos y dominio del negocio
 - [Descripción del caso de estudio](docs/etapa-01/Descripcion-caso-estudio.md)
-- Alcance del problema (en desarrollo)
+- [Alcance del sistema](docs/etapa-01/alcance-sistema.md)
 - Reglas de negocio (en desarrollo)
 - Decisiones de diseño (en desarrollo)
 
