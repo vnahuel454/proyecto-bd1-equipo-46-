@@ -1,189 +1,200 @@
-# Refinamiento y Normalización del Modelo Relacional
+# Proceso de Normalización: Caso Práctico Supermercado "El Sol"
 ### Bases de Datos I - FaCENA (UNNE)
-**Proyecto:** Sistema de Gestión Comercial - Supermercado "El Sol"  
-**Etapa:** 02 - Modelado Lógico y Normalización  
+**Caso de Estudio:** Supermercado "El Sol" | **Etapa:** 02 - Modelado Lógico
 
 ---
 
-## 1. Introducción y Objetivos
+## 1. Estado Inicial: Base de Datos sin Normalizar (0FN)
 
-El presente documento expone el proceso de refinamiento del esquema de base de datos para el **Supermercado "El Sol"**, aplicando los fundamentos de la teoría de normalización relacional introducida por Edgar F. Codd. 
+Al inicio, la información de una venta se concibe como una planilla o comprobante único donde conviven los datos del ticket, del cliente, los productos comprados y los pagos realizados:
 
-El objetivo principal de este refinamiento es obtener un esquema lógico en **Tercera Forma Normal (3FN)** que minimice la redundancia de datos y evite la aparición de anomalías relacionales durante la operación del sistema:
+### Tabla: `VENTA_SIN_NORMALIZAR`
 
-- **Anomalías de Inserción:** Impedir que la carga de una entidad dependa artificialmente de la existencia de otra (por ejemplo, poder registrar un producto nuevo en el catálogo aun cuando todavía no ha tenido ventas, o registrar un proveedor sin exigir que ya suministre un producto).
-- **Anomalías de Actualización:** Evitar que la modificación de un dato repetido en múltiples filas genere inconsistencias si alguna de ellas no se actualiza (por ejemplo, si cambia la razón social de un proveedor o el nombre de una categoría, se modifica en una única tupla).
-- **Anomalías de Borrado:** Garantizar que la eliminación de un registro transaccional no provoque la pérdida involuntaria de información estructural independiente (por ejemplo, que al anular un ticket de venta no se elimine del catálogo el producto vendido ni se borre el registro del cliente o cajero).
+| Nro Ticket | Fecha y Hora | Cliente | DNI Cliente | Productos Comprados (Lista) | Medios de Pago (Lista) | Total |
+| :---: | :---: | :--- | :---: | :--- | :--- | :---: |
+| **101** | 20/09/2026 10:15 | Carlos Gómez | 35123456 | Leche Entera 1L (2 un. x $1200),<br>Fideos Guiseros 500g (3 un. x $900) | Efectivo ($3000),<br>Tarjeta Débito ($2100) | $5100 |
+| **102** | 20/09/2026 10:30 | Ana Martínez | 28987654 | Arroz Blanco 1kg (1 un. x $1500) | Billetera Virtual ($1500) | $1500 |
 
----
-
-## 2. Marco Teórico: Dependencias Funcionales
-
-El proceso de normalización se fundamenta en el análisis riguroso de las **Dependencias Funcionales (DF)** que rigen entre los atributos del negocio.
-
-Formalmente, una dependencia funcional se expresa como:
-
-$$X \rightarrow Y$$
-
-donde $X$ representa el conjunto de atributos determinante e $Y$ el dependiente, indicando que a cada valor de $X$ le corresponde un único valor de $Y$ en la relación.
-
-Durante el análisis del supermercado se consideran tres tipos de dependencias:
-
-1. **Dependencia Funcional Completa:** Un atributo $Y$ depende de forma completa de $X$ si $X \rightarrow Y$ y no depende de ningún subconjunto propio de $X$.
-2. **Dependencia Parcial:** Ocurre cuando la clave primaria es compuesta y un atributo no clave depende únicamente de una parte de dicha clave.
-3. **Dependencia Transitiva:** Se presenta cuando un atributo no clave depende de otro atributo no clave que, a su vez, depende de la clave primaria ($X \rightarrow Y$ e $Y \rightarrow Z$, siendo $Y$ no superclave).
+### Problemas detectados en 0FN:
+- **Violación de atomicidad:** Las columnas `Productos Comprados` y `Medios de Pago` contienen listas de valores dentro de una misma celda.
+- **Redundancia:** Si un cliente compra varias veces, sus datos personales se repiten en cada fila.
+- **Anomalías:** Si cambia el precio de un producto en el catálogo general, se generaría inconsistencia con las ventas pasadas. Si no hay ventas, no se puede registrar un producto ni un cliente nuevo.
 
 ---
 
-## 3. Análisis Paso a Paso por Formas Normales
+## 2. Primera Forma Normal (1FN): Eliminación de Grupos Repetitivos y Atomicidad
 
-Partiendo de una concepción no normalizada del flujo comercial (donde un ticket de compra concentra datos del cliente, cajero, líneas de artículos, categorías, proveedores y formas de pago), se procedió a la descomposición progresiva del esquema.
+**Regla:** Cada celda debe tener un único valor atómico (indivisible) y la tabla debe tener una clave primaria (PK).
 
-### 3.1. Primera Forma Normal (1FN): Atomicidad y Claves Primarias
+Para resolver las listas repetitivas, se genera una fila por cada combinación de artículo y medio de pago:
 
-Una relación se encuentra en 1FN si:
-- Todos sus atributos son atómicos (indivisibles en el contexto del negocio).
-- Cada celda contiene un único valor.
-- No existen grupos repetitivos ni atributos multivaluados.
-- Se define una clave primaria única para cada relación.
+### Tabla en 1FN: `VENTAS_ATOMICAS`
+*(Clave Primaria Compuesta: `{Nro Ticket, ID Producto, ID Medio Pago}`)*
 
-#### Aplicación en el modelo:
-- **Descomposición de atributos compuestos:** Los datos de localización y filiación identificados en el relevamiento conceptual se dividieron en atributos atómicos:
-  - La dirección se descompuso en `calle`, `número`, `ciudad`, `codigo_postal` y `provincia`.
-  - El nombre de las personas se dividió en `nombre` y `apellido`.
-- **Eliminación de grupos repetitivos:** Un ticket de venta puede incluir múltiples productos y abonarse con varios medios de pago. Almacenar listas de productos o medios de pago dentro de la tabla `VENTA` violaría la 1FN. Por lo tanto, se descompuso en:
-  - `VENTA`: Datos propios del comprobante.
-  - `DETALLE_VENTA`: Cada línea de artículo vendida en una tupla independiente.
-  - `SE_ABONA_CON`: Cada imputación de pago en una tupla independiente.
+| Nro Ticket | Fecha | DNI Cliente | Nombre | ID Prod | Descripción | Marca | Categoría | Cant | Precio Cobrado | ID Pago | Medio Pago | Monto Pago |
+| :---: | :---: | :---: | :--- | :---: | :--- | :--- | :--- | :---: | :---: | :---: | :--- | :---: |
+| **101** | 20/09 | 35123456 | Carlos Gómez | 1 | Leche Entera | La Serenísima | Lácteos | 2 | $1200 | 1 | Efectivo | $3000 |
+| **101** | 20/09 | 35123456 | Carlos Gómez | 2 | Fideos | Matarazzo | Almacén | 3 | $900 | 2 | Tarjeta Débito | $2100 |
+| **102** | 20/09 | 28987654 | Ana Martínez | 3 | Arroz Blanco | Gallo | Almacén | 1 | $1500 | 5 | Billetera Virtual | $1500 |
 
-Todas las tablas resultantes poseen claves primarias unívocas (`DNI`, `numero_ticket`, `id_producto`, `cuit`, etc.).
+### Diagnóstico de 1FN:
+- Se logró atomicidad: ya no hay listas de valores dentro de una celda.
+- **Problema que surge:** La clave primaria es compuesta `{Nro Ticket, ID Producto, ID Pago}`, pero atributos como `Nombre`, `Marca` o `Categoría` no dependen de toda la clave, sino de una parte (dependencia parcial).
 
 ---
 
-### 3.2. Segunda Forma Normal (2FN): Eliminación de Dependencias Parciales
+## 3. Segunda Forma Normal (2FN): Eliminación de Dependencias Parciales
 
-Una relación se encuentra en 2FN si:
-- Se encuentra previamente en 1FN.
-- Todos los atributos no clave tienen dependencia funcional completa respecto de la clave primaria (no existen dependencias parciales en tablas con claves compuestas).
+**Regla:** Debe estar en 1FN y todos los atributos no clave deben depender de la **clave primaria completa**, no de una parte de ella.
 
-En nuestro esquema, las tablas con claves primarias simples (`PERSONA`, `EMPLEADO`, `CLIENTE`, `VENTA`, `PRODUCTO`, `CATEGORIA`, `PROVEEDOR`, `MEDIO_DE_PAGO`, `DESCRIPCION_PRODUCTO`) cumplen 2FN por definición, ya que no pueden poseer subconjuntos propios de la clave primaria.
+Se descompone la tabla en relaciones donde cada atributo dependa únicamente de su clave completa:
 
-El análisis de 2FN se enfoca en las relaciones con **claves compuestas**:
+### A. Tabla: `VENTA`
+*(Clave Primaria: `numero_ticket`)*
 
-#### A. Relación `DETALLE_VENTA`
-- **Atributos:** `numero_ticket`, `id_producto`, `cantidad`, `precio_unitario_cobrado`.
-- **Clave Primaria:** `{numero_ticket, id_producto}`.
-- **Dependencias Funcionales:**
-  - `{numero_ticket, id_producto}` $\rightarrow$ `cantidad`
-  - `{numero_ticket, id_producto}` $\rightarrow$ `precio_unitario_cobrado`
-- **Evaluación:** Ni la `cantidad` ni el `precio_unitario_cobrado` dependen únicamente del ticket ni únicamente del producto. Ambos datos requieren identificar la transacción y el artículo en conjunto. Atributos propios del producto como `Marca`, `codigo_barra` o `precio_actual` no se incluyeron en esta tabla, evitando dependencias parciales del tipo `{id_producto}` $\rightarrow$ `Marca`. Cumple 2FN.
+| numero_ticket (PK) | fecha_hora | dni_Cliente (FK) | nombre_cliente | total |
+| :---: | :---: | :---: | :--- | :---: |
+| **101** | 20/09/2026 10:15 | 35123456 | Carlos Gómez | $5100 |
+| **102** | 20/09/2026 10:30 | 28987654 | Ana Martínez | $1500 |
 
-#### B. Relación `SE_ABONA_CON`
-- **Atributos:** `numero_ticket`, `id_medio_de_pago`, `monto_imputado`.
-- **Clave Primaria:** `{numero_ticket, id_medio_de_pago}`.
-- **Dependencias Funcionales:**
-  - `{numero_ticket, id_medio_de_pago}` $\rightarrow$ `monto_imputado`
-- **Evaluación:** El `monto_imputado` depende de la venta específica y del medio de pago utilizado para ese importe. La `Descripción` del medio de pago se mantuvo en su tabla independiente `MEDIO_DE_PAGO`, evitando dependencias parciales. Cumple 2FN.
+### B. Tabla: `PRODUCTO`
+*(Clave Primaria: `id_producto`)*
 
-#### C. Relación `SUMINISTRA`
-- **Atributos:** `cuit`, `id_producto`.
-- **Clave Primaria:** `{cuit, id_producto}`.
-- **Evaluación:** Tabla de asociación muchos a muchos pura sin atributos no clave. Cumple 2FN por vacuidad.
+| id_producto (PK) | descripcion | Marca | id_categoria | nombre_categoria | precio_actual |
+| :---: | :--- | :--- | :---: | :--- | :---: |
+| **1** | Leche Entera 1L | La Serenísima | 10 | Lácteos | $1200 |
+| **2** | Fideos Guiseros | Matarazzo | 20 | Almacén | $900 |
+| **3** | Arroz Blanco 1kg | Gallo | 20 | Almacén | $1500 |
 
----
+### C. Tabla: `DETALLE_VENTA`
+*(Clave Primaria Compuesta: `{numero_ticket, id_producto}`)*
 
-### 3.3. Tercera Forma Normal (3FN): Eliminación de Dependencias Transitivas
+| numero_ticket (PK, FK) | id_producto (PK, FK) | cantidad | precio_unitario_cobrado |
+| :---: | :---: | :---: | :---: |
+| **101** | 1 | 2 | $1200 |
+| **101** | 2 | 3 | $900 |
+| **102** | 3 | 1 | $1500 |
 
-Una relación se encuentra en 3FN si:
-- Se encuentra previamente en 2FN.
-- Ningún atributo no clave depende transitivamente de una clave primaria ($X \rightarrow Y \rightarrow Z$, donde $Y$ no es superclave ni clave candidata).
+> **Justificación 2FN:** `cantidad` y `precio_unitario_cobrado` dependen de la clave completa (del comprobante y del artículo vendido). La marca y descripción se fueron a `PRODUCTO`, eliminando la dependencia parcial.
 
-#### Análisis de relaciones clave:
+### D. Tabla: `SE_ABONA_CON`
+*(Clave Primaria Compuesta: `{numero_ticket, id_medio_de_pago}`)*
 
-#### A. `PRODUCTO`
-- **Atributos:** `id_producto`, `codigo_barra`, `Marca`, `precio_actual`, `stock_actual`, `stock_minimo`, `id_categoria`.
-- **Clave Primaria:** `id_producto` (con clave candidata `codigo_barra`).
-- **Dependencias Funcionales:**
-  - `id_producto` $\rightarrow$ `{codigo_barra, Marca, precio_actual, stock_actual, stock_minimo, id_categoria}`
-- **Evaluación:** Si se hubiera incluido `nombre_categoria` dentro de `PRODUCTO`, existiría la dependencia transitiva:
-  $$\text{id\_producto} \rightarrow \text{id\_categoria} \rightarrow \text{nombre\_categoria}$$
-  Al aislar `CATEGORIA(id_categoria, nombre)` y conservar solo la clave foránea `id_categoria` en `PRODUCTO`, se eliminó dicha transitividad. Cumple 3FN.
+| numero_ticket (PK, FK) | id_medio_de_pago (PK, FK) | monto_imputado |
+| :---: | :---: | :---: |
+| **101** | 1 | $3000 |
+| **101** | 2 | $2100 |
+| **102** | 5 | $1500 |
 
-#### B. `VENTA`
-- **Atributos:** `numero_ticket`, `fecha_hora`, `Subtotal`, `iva`, `descuento`, `total`, `dni_Empleado`, `dni_Cliente`.
-- **Clave Primaria:** `numero_ticket`.
-- **Dependencias Funcionales:**
-  - `numero_ticket` $\rightarrow$ `{fecha_hora, Subtotal, iva, descuento, total, dni_Empleado, dni_Cliente}`
-- **Evaluación:** La tabla solo almacena las claves foráneas que identifican al cajero y al cliente. Datos como el nombre del cliente o el legajo del empleado no residen en `VENTA`, impidiendo transitividades como:
-  $$\text{numero\_ticket} \rightarrow \text{dni\_Empleado} \rightarrow \text{numero\_legajo}$$
-  Cumple 3FN.
+### E. Tabla: `MEDIO_DE_PAGO`
+*(Clave Primaria: `id_medio_de_pago`)*
 
-#### C. Jerarquía `PERSONA`, `EMPLEADO` y `CLIENTE`
-- **Estructura:**
-  - `PERSONA(DNI, nombre, apellido, Cuil, Correo_electronico, telefono, fecha_nacimiento, Calle, número, Ciudad, codigo_postal, provincia)`
-  - `EMPLEADO(dni_Empleado, numero_legajo, rol)` con `dni_Empleado` como PK y FK.
-  - `CLIENTE(dni_Cliente)` con `dni_Cliente` como PK y FK.
-- **Evaluación:** El supertipo `PERSONA` concentra los atributos generales compartidos, evitando duplicar nombres y contactos en tablas separadas. `EMPLEADO` solo almacena los atributos exclusivos de su condición laboral (`numero_legajo`, `rol`), cuyos valores dependen funcionalmente de la clave `dni_Empleado`. Cumple 3FN.
+| id_medio_de_pago (PK) | Descripción |
+| :---: | :--- |
+| **1** | Efectivo |
+| **2** | Tarjeta de Débito |
+| **5** | Billetera Virtual |
 
 ---
 
-## 4. Esquema Lógico Relacional Resultante (en 3FN)
+## 4. Tercera Forma Normal (3FN): Eliminación de Dependencias Transitivas
 
-A continuación se detalla la estructura formal de las relaciones obtenidas tras el proceso de refinamiento. Se indican las claves primarias (PK) y foráneas (FK):
+**Regla:** Debe estar en 2FN y **ningún atributo no clave debe depender de otro atributo no clave** ($X \rightarrow Y \rightarrow Z$).
 
-1. **PERSONA** (<u>DNI</u>, nombre, apellido, Cuil, Correo_electronico, telefono, fecha_nacimiento, Calle, número, Ciudad, codigo_postal, provincia)
-   - *Claves Candidatas:* `DNI`, `Cuil`, `Correo_electronico`.
+### Dependencias transitivas detectadas en 2FN:
+1. En `PRODUCTO`: `id_producto` $\rightarrow$ `id_categoria` $\rightarrow$ `nombre_categoria`. El nombre de la categoría depende del código de categoría, no del producto.
+2. En `VENTA`: `numero_ticket` $\rightarrow$ `dni_Cliente` $\rightarrow$ `nombre_cliente`. El nombre del cliente depende de su DNI, no del ticket.
 
-2. **EMPLEADO** (<u>dni_Empleado</u>, numero_legajo, rol)
-   - *PK:* `dni_Empleado` (FK referencia a `PERSONA.DNI`).
-   - *Clave Alternativa:* `numero_legajo`.
+### Solución aplicada para 3FN:
 
-3. **CLIENTE** (<u>dni_Cliente</u>)
-   - *PK:* `dni_Cliente` (FK referencia a `PERSONA.DNI`).
+#### A. Aislamiento de `CATEGORIA`
+Se extrae el nombre de la categoría a su propia tabla:
 
-4. **CATEGORIA** (<u>id_categoria</u>, nombre)
+**`PRODUCTO`** *(en 3FN)*:
+| id_producto (PK) | codigo_barra | Marca | precio_actual | stock_actual | stock_minimo | id_categoria (FK) |
+| :---: | :---: | :--- | :---: | :---: | :---: | :---: |
+| **1** | 779123456001 | La Serenísima | $1200 | 50 | 10 | 10 |
+| **2** | 779123456002 | Matarazzo | $900 | 120 | 20 | 20 |
+| **3** | 779123456003 | Gallo | $1500 | 80 | 15 | 20 |
 
-5. **PRODUCTO** (<u>id_producto</u>, codigo_barra, Marca, precio_actual, stock_actual, stock_minimo, id_categoria)
-   - *Clave Candidata:* `codigo_barra`.
-   - *FK:* `id_categoria` referencia a `CATEGORIA.id_categoria`.
+**`CATEGORIA`** *(nueva tabla)*:
+| id_categoria (PK) | nombre |
+| :---: | :--- |
+| **10** | Lácteos |
+| **20** | Almacén |
 
-6. **DESCRIPCION_PRODUCTO** (<u>id_descripcion</u>, detalle, id_producto)
-   - *FK:* `id_producto` referencia a `PRODUCTO.id_producto`.
+#### B. Aislamiento de `PERSONA` y `CLIENTE`
+Se extraen los datos personales del ticket hacia la tabla de personas:
 
-7. **PROVEEDOR** (<u>cuit</u>, razon_social, teléfono, Calle, número, Ciudad, codigo_postal, provincia)
+**`PERSONA`** *(datos biográficos)*:
+| DNI (PK) | nombre | apellido | cuil | teléfono | calle | número | ciudad | codigo_postal | provincia |
+| :---: | :--- | :--- | :---: | :---: | :--- | :---: | :--- | :---: | :--- |
+| **35123456** | Carlos | Gómez | 20351234568 | 3794112233 | San Martín | 1050 | Corrientes | 3400 | Corrientes |
+| **28987654** | Ana | Martínez | 27289876544 | 3794998877 | Av. Italia | 420 | Resistencia | 3500 | Chaco |
 
-8. **SUMINISTRA** (<u>cuit</u>, <u>id_producto</u>)
-   - *PK Compuesta:* `{cuit, id_producto}`.
-   - *FK:* `cuit` referencia a `PROVEEDOR.cuit`.
-   - *FK:* `id_producto` referencia a `PRODUCTO.id_producto`.
+**`CLIENTE`**:
+| dni_Cliente (PK, FK) |
+| :---: |
+| **35123456** |
+| **28987654** |
 
-9. **MEDIO_DE_PAGO** (<u>id_medio_de_pago</u>, Descripción)
-
-10. **VENTA** (<u>numero_ticket</u>, fecha_hora, Subtotal, iva, descuento, total, dni_Empleado, dni_Cliente)
-    - *FK:* `dni_Empleado` referencia a `EMPLEADO.dni_Empleado`.
-    - *FK:* `dni_Cliente` referencia a `CLIENTE.dni_Cliente`.
-
-11. **DETALLE_VENTA** (<u>numero_ticket</u>, <u>id_producto</u>, cantidad, precio_unitario_cobrado)
-    - *PK Compuesta:* `{numero_ticket, id_producto}`.
-    - *FK:* `numero_ticket` referencia a `VENTA.numero_ticket`.
-    - *FK:* `id_producto` referencia a `PRODUCTO.id_producto`.
-
-12. **SE_ABONA_CON** (<u>numero_ticket</u>, <u>id_medio_de_pago</u>, monto_imputado)
-    - *PK Compuesta:* `{numero_ticket, id_medio_de_pago}`.
-    - *FK:* `numero_ticket` referencia a `VENTA.numero_ticket`.
-    - *FK:* `id_medio_de_pago` referencia a `MEDIO_DE_PAGO.id_medio_de_pago`.
-
----
-
-## 5. Propiedades de la Descomposición
-
-El esquema refinado verifica las dos propiedades fundamentales exigidas por la teoría relacional:
-
-1. **Unión sin pérdida de información (Lossless-Join):** Toda descomposición realizada utiliza como nexo una clave primaria o superclave de alguna de las relaciones resultantes, garantizando que la reconstrucción de la información mediante operaciones de reunión natural (`NATURAL JOIN`) no genere tuplas espurias.
-2. **Preservación de Dependencias:** El conjunto de dependencias funcionales inherentes a las reglas de negocio del supermercado puede ser verificado íntegramente dentro de cada una de las tablas individuales a través de sus restricciones de clave primaria y claves foráneas, sin requerir la ejecución de uniones costosas.
+**`VENTA`** *(en 3FN, con claves foráneas e importes de comprobante)*:
+| numero_ticket (PK) | fecha_hora | Subtotal | iva | total | dni_Empleado (FK) | dni_Cliente (FK) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **101** | 20/09/2026 10:15 | $4214.88 | $885.12 | $5100 | 30111222 | 35123456 |
+| **102** | 20/09/2026 10:30 | $1239.67 | $260.33 | $1500 | 30111222 | 28987654 |
 
 ---
 
-## 6. Conclusión
+## 5. Esquema Relacional Definitivo (12 Tablas)
 
-El esquema obtenido para el **Supermercado "El Sol"** se encuentra rigurosamente normalizado en **Tercera Forma Normal (3FN)**. Esta estructura proporciona una base sólida para su posterior implementación física en Microsoft SQL Server, eliminando redundancias operativas, asegurando la integridad referencial histórica en la facturación y optimizando el desempeño para transacciones comerciales de tipo OLTP.
+| N° | Nombre de Tabla | Clave Primaria (PK) | Claves Foráneas (FK) | Atributos No Clave |
+| :---: | :--- | :--- | :--- | :--- |
+| 1 | **`PERSONA`** | `DNI` | *(Ninguna)* | `nombre`, `apellido`, `cuil`, `correo_electronico`, `telefono`, `fecha_nacimiento`, `calle`, `número`, `ciudad`, `codigo_postal`, `provincia` |
+| 2 | **`EMPLEADO`** | `dni_Empleado` | `dni_Empleado` $\rightarrow$ `PERSONA(DNI)` | `numero_legajo`, `rol` |
+| 3 | **`CLIENTE`** | `dni_Cliente` | `dni_Cliente` $\rightarrow$ `PERSONA(DNI)` | *(Ninguno - hereda de Persona)* |
+| 4 | **`CATEGORIA`** | `id_categoria` | *(Ninguna)* | `nombre` |
+| 5 | **`PRODUCTO`** | `id_producto` | `id_categoria` $\rightarrow$ `CATEGORIA(id_categoria)` | `codigo_barra`, `Marca`, `precio_actual`, `stock_actual`, `stock_minimo` |
+| 6 | **`DESCRIPCION_PRODUCTO`** | `id_descripcion` | `id_producto` $\rightarrow$ `PRODUCTO(id_producto)` | `detalle` |
+| 7 | **`PROVEEDOR`** | `cuit` | *(Ninguna)* | `razon_social`, `teléfono`, `calle`, `número`, `ciudad`, `codigo_postal`, `provincia` |
+| 8 | **`SUMINISTRA`** | `{cuit, id_producto}` | `cuit` $\rightarrow$ `PROVEEDOR(cuit)`<br>`id_producto` $\rightarrow$ `PRODUCTO(id_producto)` | *(Ninguno)* |
+| 9 | **`MEDIO_DE_PAGO`** | `id_medio_de_pago` | *(Ninguna)* | `Descripción` |
+| 10 | **`VENTA`** | `numero_ticket` | `dni_Empleado` $\rightarrow$ `EMPLEADO(dni_Empleado)`<br>`dni_Cliente` $\rightarrow$ `CLIENTE(dni_Cliente)` | `fecha_hora`, `Subtotal`, `iva`, `descuento`, `total` |
+| 11 | **`DETALLE_VENTA`** | `{numero_ticket, id_producto}` | `numero_ticket` $\rightarrow$ `VENTA(numero_ticket)`<br>`id_producto` $\rightarrow$ `PRODUCTO(id_producto)` | `cantidad`, `precio_unitario_cobrado` |
+| 12 | **`SE_ABONA_CON`** | `{numero_ticket, id_medio_de_pago}` | `numero_ticket` $\rightarrow$ `VENTA(numero_ticket)`<br>`id_medio_de_pago` $\rightarrow$ `MEDIO_DE_PAGO(id_medio_de_pago)` | `monto_imputado` |
+
+---
+
+## 6. Justificaciones Técnicas Avanzadas y Decisiones de Refinamiento
+
+En respuesta al análisis formal y exhaustivo de la teoría relacional (Unidad 04 FaCENA), se documentan las siguientes tres decisiones de diseño:
+
+### 6.1. Dependencia Funcional en Direcciones (Localidad y Código Postal)
+- **Análisis Teórico:** En una normalización académica pura, existe la dependencia funcional:
+  $$\text{codigo\_postal} \rightarrow \{\text{ciudad}, \text{provincia}\}$$
+  Bajo este criterio estricto, mantener juntos `codigo_postal`, `ciudad` y `provincia` en `PERSONA` y `PROVEEDOR` introduce una dependencia transitiva formal:
+  $$\text{DNI} \rightarrow \text{codigo\_postal} \rightarrow \{\text{ciudad}, \text{provincia}\}$$
+- **Corrección teórica formal:** Podría extraerse la tabla:
+  $$\text{LOCALIDAD}(\underline{\text{codigo\_postal}}, \text{ciudad}, \text{provincia})$$
+  dejando únicamente `codigo_postal` como clave foránea en `PERSONA` y `PROVEEDOR`.
+- **Decisión en el diseño implementado:** Se optó por mantener los campos de dirección descompuestos de forma atómica dentro de `PERSONA` y `PROVEEDOR` para evitar uniones (`JOINs`) adicionales en operaciones cotidianas de facturación y despacho, asumiendo este compromiso clásico de diseño en sistemas transaccionales comerciales.
+
+### 6.2. Atributos Derivados en `VENTA` (Desnormalización Controlada por Requerimiento Fiscal)
+- **Análisis Teórico:** Las columnas `Subtotal`, `iva`, `descuento` y `total` en la tabla `VENTA` son atributos derivados calculables a partir de los renglones de `DETALLE_VENTA` ($\text{Total} = \sum \text{cantidad} \times \text{precio\_unitario\_cobrado}$). En 3FN pura no deberían persistirse físicamente, sino resolverse mediante vistas o consultas calculadas.
+- **Justificación según la Unidad 04 (Sección 6: Desnormalización):**
+  Su inclusión en la tabla física responde a una **desnormalización controlada fundamentada** por dos razones de peso:
+  1. **Requerimiento Legal y Fiscal (RN.05 y RN.08):** El ticket fiscal emitido es un documento tributario cerrado e inmutable. Persistir los totales congelados garantiza la integridad contable ante auditorías, previniendo que un eventual recálculo dinámico altere el valor histórico facturado.
+  2. **Rendimiento OLTP:** Evita ejecutar agregaciones masivas (`SUM`) sobre miles de tuplas de detalle en cada consulta de arqueo de caja o informe de ventas diarias.
+
+### 6.3. Análisis de la Relación 1:1 en `DESCRIPCION_PRODUCTO` (Particionamiento Vertical)
+- **Análisis Teórico:** La tabla `DESCRIPCION_PRODUCTO` se vincula de manera 1:1 con `PRODUCTO` y contiene un único atributo funcional (`detalle`). En teoría estricta de normalización, si `id_producto` determina a `detalle`, este campo puede integrarse directamente como una columna más en `PRODUCTO`.
+- **Justificación de Diseño:** La separación en una entidad independiente se fundamenta en la técnica de **particionamiento vertical de almacenamiento**:
+  - Al aislar textos extensos de descripción o especificaciones técnicas en una tabla satélite, la tabla principal `PRODUCTO` conserva un tamaño de fila (*row size*) reducido y compacto.
+  - Esto optimiza la lectura en el motor de base de datos (Microsoft SQL Server), permitiendo que quepan más tuplas por página de memoria en las consultas ultrarrápidas de cobro por escáner de código de barras en las líneas de caja.
+
+---
+
+## 7. Verificación de Propiedades de Descomposición
+
+1. **Unión sin pérdida de información (Lossless-Join):** Toda descomposición utiliza como atributo común una superclave de las relaciones resultantes, garantizando que al unir las tablas mediante `JOIN` no se generen tuplas espurias ni se pierda fidelidad transaccional.
+2. **Preservación de Dependencias:** El conjunto de restricciones funcionales del negocio se valida localmente mediante las claves primarias (`PK`) y de integridad referencial (`FK`), sin requerir validaciones cruzadas complejas entre tablas no vinculadas.
