@@ -48,8 +48,8 @@ proyecto-bd1-equipo-46/
 
 | Etapa | Contenido | Estado |
 | :---: | :--- | :---: |
-| 01 | Requerimientos y dominio del negocio | ![](https://img.shields.io/badge/-En%20curso-F9A825?style=flat-square) |
-| 02 | Modelo conceptual, relacional y normalización | ![](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
+| 01 | Requerimientos y dominio del negocio | ![](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square) |
+| 02 | Modelo conceptual, relacional y normalización | ![](https://img.shields.io/badge/-En%20curso-F9A825?style=flat-square) |
 | 03 | Implementación de la base de datos (DDL y DML) | ![](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
 | 04 | Consultas del negocio y casos de uso | ![](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
 | 05 | Temas técnicos (procedimientos, triggers, seguridad) | ![](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
@@ -57,20 +57,20 @@ proyecto-bd1-equipo-46/
 ## Documentación
 
 ### Etapa 01 - Requerimientos y dominio del negocio
-- [Descripción del caso de estudio](docs/etapa-01/Descripcion-caso-estudio.md)
+- [Descripción del caso de estudio](docs/etapa-01/descripcion-caso-estudio.md)
 - [Alcance del sistema](docs/etapa-01/alcance-sistema.md)
-- Reglas de negocio (en desarrollo)
-- Decisiones de diseño (en desarrollo)
+- [Reglas de negocio](docs/etapa-01/reglas-de-negocio.md)
 
 ### Etapa 02 - Modelado conceptual y relacional
-- [Diagrama Entidad-Relación](docs/etapa-02/erdplus%20(4).png)
-- Modelo relacional (pendiente)
-- Normalización (pendiente)
+- [Diagrama Entidad-Relación (DER)](docs/etapa-02/der/SupermercadoElSol-DER(Corregido)%20(2).png)
+- [Componentes del modelo conceptual](docs/etapa-02/der/componentes-del-modelo-conceptual.md)
+- [Decisiones de diseño del DER](docs/etapa-02/der/decisiones-diseno-der.md)
+- [Modelo Relacional](docs/etapa-02/modelo-relacional.png)
 
 ## Diagrama Entidad-Relación
 
 <p align="center">
-  <img src="docs/etapa-02/erdplus%20(4).png" alt="Diagrama Entidad-Relación" width="850">
+  <img src="docs/etapa-02/der/SupermercadoElSol-DER(Corregido) (2).png" alt="Diagrama Entidad-Relación" width="100%">
 </p>
 
 ## Integrantes - Equipo 46
