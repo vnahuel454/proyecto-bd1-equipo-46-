@@ -1,14 +1,14 @@
 Entidades:
 
-Venta
-Empleado
-Persona
-Cliente
-Producto
-Proveedor
-Medio_de_pago
-Categoria
-descripcion_producto
+-Venta.
+-Empleado.
+-Persona.
+-Cliente.
+-Producto.
+-Proveedor.
+-Medio_de_pago.
+-Categoria.
+-descripcion_producto.
 
 Relaciones:
 
