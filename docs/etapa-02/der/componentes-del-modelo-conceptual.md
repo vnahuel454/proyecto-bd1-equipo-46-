@@ -53,4 +53,4 @@ Supertipo: Persona
 
 Subtipo: Empleado y Cliente
 
-clasificacion: solapada, total.
+clasificacion: solapada, parcial.
