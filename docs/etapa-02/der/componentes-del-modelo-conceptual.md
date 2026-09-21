@@ -17,7 +17,6 @@ Relaciones:
 - Cliente —> realiza —> Venta
 - Empleado —> registra —> Venta
 - Producto —> pertenece_a —> Categoria
-- Producto —> tiene —> descripcion_producto
 - Proveedor —> suministra —> Producto
 
 Atributos (entidades y relaciones):
@@ -32,14 +31,11 @@ Entidad Venta: total, numero_ticket(atributo unico), fecha_hora, descuento, iva,
 
 Entidad medio_de_pago: id_medio_de_pago(atributo unico), descripcion.
 
-Entidad producto: stock_actual, id_producto(atributo unico), codigo_barra, stock_minimo, marca, precio_actual.
+Entidad producto: stock_actual, id_producto(atributo unico), codigo_barra, stock_minimo, marca, precio_actual, detalle.
 
 Entidad proveedor: razon_social, cuit(atributo unico), telefono, direccion(atributo compuesto: numero, ciudad, calle, codigo_postal, provincia).
 
 Entidad categoria: id_categoria(atributo unico) , nombre.
-
-Entidad descripcion_producto: id_descripcion(atributo unico), detalle.
-
 
 Relacion detalle_venta: subtotal(atributo parcial), cantidad, precio_unitario_cobrado.
 
