@@ -9,11 +9,9 @@
 |  **101**   | 20/09/2026 10:15 | Carlos Gómez |  35123456   | Leche Entera 1L (2 un. x $1200),<br>Fideos Guiseros 500g (3 un. x $900) | Efectivo ($3000),<br>Tarjeta Débito ($2100) | $5100 |
 |  **102**   | 20/09/2026 10:30 | Ana Martínez |  28987654   | Arroz Blanco 1kg (1 un. x $1500)                                        | Billetera Virtual ($1500)                   | $1500 |
 
-### Problemas detectados en 0FN:
+### Problemas en 0FN
 
-- Las columnas `Productos Comprados` y `Medios de Pago` contienen listas de valores dentro de una misma celda.
-- Si un cliente compra varias veces, sus datos personales se repiten en cada fila.
-- Si cambia el precio de un producto en el catálogo general, se generaría inconsistencia con las ventas pasadas. Si no hay ventas, no se puede registrar un producto ni un cliente nuevo.
+Las columnas `Productos Comprados` y `Medios de Pago` violan la atomicidad al guardar múltiples valores en una misma celda. Además, los datos del cliente se repiten en cada compra y no es posible registrar productos o clientes nuevos sin una venta asociada.
 
 ---
 
@@ -90,10 +88,7 @@ _(Clave Primaria: `id_medio_de_pago`)_
 
 ## 3FN
 
-### Dependencias transitivas detectadas en 2FN:
-
-1. En `PRODUCTO`: `id_producto` $\rightarrow$ `id_categoria` $\rightarrow$ `nombre_categoria`. El nombre de la categoría depende del código de categoría, no del producto.
-2. En `VENTA`: `numero_ticket` $\rightarrow$ `dni_Cliente` $\rightarrow$ `nombre_cliente`. El nombre del cliente depende de su DNI, no del ticket.
+En las tablas de 2FN persisten dependencias transitivas: en `PRODUCTO`, el nombre de la categoría depende de `id_categoria` y no directamente de `id_producto`. De forma similar, en `VENTA`, el nombre del cliente depende de `dni_Cliente` y no del ticket. Para alcanzar 3FN, estas dependencias se separan en tablas propias:
 
 ### A. Separación de `CATEGORIA`
 
@@ -157,28 +152,13 @@ Los datos personales del cliente se extraen de `VENTA` hacia la tabla `PERSONA`,
 
 ## Justificaciones y decisiones de diseño
 
-Al revisar el modelo respecto a 3FN y las necesidades del supermercado, se tomaron tres decisiones concretas:
+### 1. Domicilios en `PERSONA` y `PROVEEDOR`
+Se mantuvieron los atributos de domicilio (`calle`, `número`, `ciudad`, `codigo_postal`, `provincia`) directamente dentro de `PERSONA` y `PROVEEDOR` para evitar uniones (`JOIN`) adicionales durante la facturación y consulta de contactos, priorizando la agilidad en las operaciones de caja y despacho.
 
-### 1. Manejo de Direcciones y Localidad
-En la teoría estricta de 3FN existe una dependencia transitiva en los domicilios:
-`DNI -> codigo_postal -> {ciudad, provincia}`
+### 2. Importes calculados en `VENTA`
+Se conservan `Subtotal`, `iva`, `descuento` y `total` en la tabla `VENTA` por requerimiento fiscal y rendimiento operativo. El ticket emitido es un comprobante cerrado e inmutable que debe resguardar los importes históricos exactos ante auditorías (RN.05 y RN.08), evitando que modificaciones posteriores alteren ventas pasadas. A su vez, evita ejecutar sumatorias sobre los renglones de `DETALLE_VENTA` en cada arqueo de caja o reporte diario.
 
-Para cumplir 3FN pura se podría separar una tabla `LOCALIDAD(codigo_postal, ciudad, provincia)` y dejar únicamente `codigo_postal` en `PERSONA` y `PROVEEDOR`.
-
-Sin embargo, para las necesidades de este sistema (ventas en línea de caja y comprobantes rápidos), decidimos mantener `ciudad` y `provincia` en `PERSONA` y `PROVEEDOR`. Esto evita hacer un `JOIN` extra cada vez que se emite un comprobante o se consultan datos de contacto, siendo una simplificación habitual en sistemas transaccionales.
-
-### 2. Totales y subtotales en `VENTA` (Desnormalización controlada)
-En 3FN teórica, las columnas `Subtotal`, `iva`, `descuento` y `total` no deberían guardarse en la tabla `VENTA`, ya que se calculan a partir de `DETALLE_VENTA` (`cantidad * precio_unitario_cobrado`).
-
-Decidimos guardarlas aplicando el criterio de **desnormalización controlada** (visto en la Unidad 04 de la cátedra):
-- **Criterio legal y fiscal (RN.05 y RN.08):** El ticket emitido es un comprobante cerrado. Guardar los importes congelados garantiza que el valor histórico facturado no se altere si a futuro cambian las alícuotas o reglas de cálculo.
-- **Rendimiento:** Evita tener que recalcular y sumar todos los detalles de venta cada vez que se consulta un ticket o se hace un cierre de caja.
-
-### 3. Tabla `DESCRIPCION_PRODUCTO` (Relación 1 a 1)
-Entre `PRODUCTO` y `DESCRIPCION_PRODUCTO` existe una relación 1 a 1. En teoría de normalización, el campo `detalle` podría ser directamente una columna más dentro de `PRODUCTO`.
-
-Se decidió separarlo aplicando **particionamiento vertical**:
-- Al mover los textos largos a otra tabla, las filas de `PRODUCTO` quedan más livianas y con un tamaño uniforme.
-- Esto permite que en Microsoft SQL Server entren más productos por página de memoria, haciendo mucho más rápido el escaneo por código de barra en las cajas.
+### 3. Particionamiento vertical en `DESCRIPCION_PRODUCTO`
+La descripción del producto se separó en una tabla independiente con relación 1 a 1 para aplicar particionamiento vertical. Al aislar textos extensos en una tabla propia, la tabla principal `PRODUCTO` mantiene registros compactos y uniformes, lo que optimiza el almacenamiento en páginas de memoria de Microsoft SQL Server y acelera las lecturas durante el escaneo de códigos de barra en línea de caja.
 
 ---
