@@ -1,0 +1,9 @@
+# Archivos y notas locales
+manifiesto.md
+
+# Editores y sistema
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
