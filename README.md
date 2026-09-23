@@ -78,7 +78,8 @@ proyecto-bd1-equipo-46/
 - [Diagrama Entidad-Relación (DER)](docs/etapa-02/der/SupermercadoElSol-DER-final.png)
 - [Componentes del modelo conceptual](docs/etapa-02/der/componentes-del-modelo-conceptual.md)
 - [Decisiones de diseño del DER](docs/etapa-02/der/decisiones-diseno-der.md)
-- [Modelo Relacional](docs/etapa-02/modelo-relacional.png)
+- [Decisiones de diseño del Modelo Relacional](docs/etapa-02/decisiones-modelo-relacional.md)
+- [Modelo Relacional](docs/etapa-02/SupermercadoElSol-modelo-relacional(corregido).png)
 - [Normalización](docs/etapa-02/normalizacion.md)
 
 </details>
@@ -92,7 +93,7 @@ proyecto-bd1-equipo-46/
 ## Diagrama del Modelo Relacional
 
 <p align="center">
-  <img src="docs/etapa-02/modelo-relacional.png" alt="Diagrama del Modelo Relacional" width="100%">
+  <img src="docs/etapa-02/SupermercadoElSol-modelo-relacional(corregido).png" alt="Diagrama del Modelo Relacional" width="100%">
 </p>
 
 ## Integrantes — Equipo 46
