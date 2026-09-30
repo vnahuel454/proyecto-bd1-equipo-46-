@@ -9,7 +9,7 @@ GO
 
 CREATE TABLE PERSONA ( 
 	dni INT NOT NULL, 
-	cuil VARCHAR(15) NULL, 
+	cuil VARCHAR(15) NOT NULL, 
 	nombre VARCHAR(50) NOT NULL, 
 	apellido VARCHAR(50) NOT NULL, 
 	calle VARCHAR(100) NOT NULL, 
@@ -18,13 +18,13 @@ CREATE TABLE PERSONA (
 	provincia VARCHAR(50) NOT NULL, 
 	codigo_postal VARCHAR(10) NOT NULL, 
 	telefono VARCHAR(20) NULL, 
-	email VARCHAR(100) NULL, 
+	correo_electronico VARCHAR(100) NULL, 
 	fecha_nacimiento DATE NOT NULL, 
 
 	CONSTRAINT pk_persona PRIMARY KEY (dni), 
 	CONSTRAINT uq_persona_cuil UNIQUE (cuil), 
 	CONSTRAINT uq_persona_email UNIQUE (email), 
-	CONSTRAINT ck_persona_dni_positivo CHECK (dni > 0)
+	CONSTRAINT ck_persona_dni_positivo CHECK (dni >= 0)
  );
  GO
  
