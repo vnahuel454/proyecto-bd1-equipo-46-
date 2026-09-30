@@ -1,13 +1,6 @@
--- =========================================
--- Bloque: Proveedor y Suministra
--- Alfredo López - Equipo 46
--- =========================================
 USE SupermercadoElSol;
 GO
 
--- =============================================================================
--- POBLADO INICIAL: PROVEEDOR (10 registros coherentes)
--- =============================================================================
 INSERT INTO PROVEEDOR (cuit, razon_social, telefono, calle, numero, ciudad, codigo_postal, provincia)
 VALUES 
     ('30501234568', 'Mastellone Hermanos S.A.',          '01144808000', 'Av. Almirante Brown',   '957',  'General Rodríguez', '1748', 'Buenos Aires'),
@@ -22,41 +15,21 @@ VALUES
     ('30711223344', 'Distribuidora del Litoral S.R.L.',  '03794455667', 'Av. Independencia',     '3200', 'Corrientes',        '3400', 'Corrientes');
 GO
 
--- =============================================================================
--- POBLADO INICIAL: SUMINISTRA (11 registros de abastecimiento)
--- Relaciona los proveedores con los productos reales del catálogo (IDs 1 al 8)
--- =============================================================================
 INSERT INTO SUMINISTRA (cuit, id_producto)
 VALUES 
-    -- Mastellone abastece Leche (1) y Yogur (6)
     ('30501234568', 1),
     ('30501234568', 6),
-
-    -- Molinos abastece Fideos (2) y Polenta (7)
     ('30502345679', 2),
     ('30502345679', 7),
-
-    -- Arrocera San Salvador abastece Arroz Gallo (3)
     ('30503456780', 3),
-
-    -- Coca-Cola FEMSA abastece Gaseosa Coca-Cola (4)
     ('30505678902', 4),
-
-    -- Clorox abastece Detergente Ayudín (5)
     ('30507890124', 5),
-
-    -- Quilmes abastece Gaseosa Pepsi (8)
     ('30508901235', 8),
-
-    -- Distribuidora del Litoral (abastece también Leche, Fideos y Arroz a nivel regional, RN.04)
     ('30711223344', 1),
     ('30711223344', 2),
     ('30711223344', 3);
 GO
 
--- =============================================================================
--- CONSULTAS DE VERIFICACIÓN
--- =============================================================================
 SELECT * FROM PROVEEDOR;
 SELECT * FROM SUMINISTRA;
 GO
