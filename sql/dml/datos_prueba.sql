@@ -144,3 +144,27 @@ INSERT INTO SE_ABONA_CON (numero_ticket, id_medio_de_pago, monto_imputado) VALUE
 SELECT * FROM DETALLE_VENTA;
 SELECT * FROM SE_ABONA_CON;
 
+
+--===================================
+.. BLOQUE MEDIOS_DE_PAGO  Y  VENTAS
+-- Jorge Maciel - GRIPO 46
+--===================================
+
+INSERT INTO PERSONA (DNI, nombre, apellido) VALUES 
+('11111111', 'Carlos', 'Gómez'),
+('22222222', 'María', 'López');
+
+INSERT INTO EMPLEADO (dni_Empleado, numero_legajo, rol) VALUES 
+('11111111', 101, 'Cajero');
+
+INSERT INTO CLIENTE (dni_Cliente) VALUES 
+('22222222');
+
+INSERT INTO MEDIO_DE_PAGO (id_medio_de_pago, [Descripción]) VALUES 
+(1, 'Efectivo'),
+(2, 'Tarjeta de Débito'),
+(3, 'Tarjeta de Crédito');
+
+INSERT INTO VENTA (numero_ticket, fecha_hora, Subtotal, iva, descuento, total, dni_Empleado, dni_Cliente) VALUES 
+(1001, '2026-03-30 10:30:00', 1000.00, 210.00, 0.00, 1210.00, '11111111', '22222222');
+GO
