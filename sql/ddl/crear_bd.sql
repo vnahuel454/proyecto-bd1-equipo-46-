@@ -239,9 +239,41 @@ CREATE TABLE SUMINISTRA (
     cuit            VARCHAR(11)     NOT NULL,
     id_producto     INT             NOT NULL,
 
+
+
+
+	
     CONSTRAINT PK_Suministra PRIMARY KEY (cuit, id_producto),
     CONSTRAINT FK_Suministra_Proveedor FOREIGN KEY (cuit)
         REFERENCES PROVEEDOR(cuit)
+
+
+--==========================================
+	BLOQUE: MEDIOS_DE_PAGO y VENTA
+	Jorge Maciel - Grupo 46
+--==========================================
+
+CREATE TABLE MEDIO_DE_PAGO (
+    id_medio_de_pago INT PRIMARY KEY,
+    [Descripción] VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE VENTA (
+    numero_ticket INT PRIMARY KEY,
+    fecha_hora DATETIME NOT NULL,
+    Subtotal DECIMAL(10, 2) NOT NULL,
+    iva DECIMAL(10, 2) NOT NULL,
+    descuento DECIMAL(10, 2) DEFAULT 0.00,
+    total DECIMAL(10, 2) NOT NULL,
+    dni_Empleado VARCHAR(20) NOT NULL,
+    dni_Cliente VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_venta_empleado FOREIGN KEY (dni_Empleado) REFERENCES EMPLEADO(dni_Empleado),
+    CONSTRAINT fk_venta_cliente FOREIGN KEY (dni_Cliente) REFERENCES CLIENTE(dni_Cliente)
+);
+
+
+
+	
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     CONSTRAINT FK_Suministra_Producto FOREIGN KEY (id_producto)
