@@ -80,6 +80,7 @@ VALUES (8, '779123456008', 'Pepsi', 'Gaseosa Cola Light 2.25L', 2000, 45, 12, 30
 select *from Categoria;
 select *from Producto;
 
+
 INSERT INTO PROVEEDOR (cuit, razon_social, telefono, calle, numero, ciudad, codigo_postal, provincia)
 VALUES 
     ('30501234568', 'Mastellone Hermanos S.A.',          '01144808000', 'Av. Almirante Brown',   '957',  'General Rodríguez', '1748', 'Buenos Aires'),
@@ -112,3 +113,34 @@ GO
 SELECT * FROM PROVEEDOR;
 SELECT * FROM SUMINISTRA;
 GO
+
+
+
+
+
+-- 8 registros en DETALLE_VENTA
+
+INSERT INTO DETALLE_VENTA (numero_ticket, id_producto, Cantidad, precio_unitario_cobrado) VALUES 
+(1001, 10, 2, 150.00),
+(1001, 12, 1, 450.50),
+(1002, 15, 5, 20.00),
+(1003, 10, 1, 150.00),
+(1004, 22, 10, 99.99),
+(1005, 12, 3, 450.50),
+(1005, 15, 2, 20.00),
+(1006, 30, 1, 1200.00);
+
+-- 8 registros en SE_ABONA_CON
+INSERT INTO SE_ABONA_CON (numero_ticket, id_medio_de_pago, monto_imputado) VALUES 
+(1001, 1, 500.00),
+(1001, 2, 250.50),
+(1002, 1, 100.00),
+(1003, 3, 150.00),
+(1004, 2, 999.90),
+(1005, 1, 1000.00),
+(1005, 4, 410.00),
+(1006, 2, 1200.00);
+
+SELECT * FROM DETALLE_VENTA;
+SELECT * FROM SE_ABONA_CON;
+
