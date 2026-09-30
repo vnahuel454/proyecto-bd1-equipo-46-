@@ -144,3 +144,82 @@ INSERT INTO SE_ABONA_CON (numero_ticket, id_medio_de_pago, monto_imputado) VALUE
 SELECT * FROM DETALLE_VENTA;
 SELECT * FROM SE_ABONA_CON;
 
+-- =============================================
+-- INSERCIÓN DE DATOS DE PRUEBA (DML - 10 REGISTROS)
+--Jorge Maciel - Grupo 46
+-- =============================================
+
+-- 1. Insertar 10 Personas
+INSERT INTO PERSONA (DNI, nombre, apellido, codigo_postal, Calle, Ciudad, [número], provincia, teléfono, fecha_nacimiento, Cuil, [Correo_electrónico]) VALUES 
+('10000001', 'Juan', 'Pérez', 'W3400', 'San Martín', 'Corrientes', '123', 'Corrientes', '3794111111', '1988-05-12', '20-10000001-3', 'juan.perez@email.com'),
+('10000002', 'María', 'Gómez', 'W3400', 'Belgrano', 'Corrientes', '456', 'Corrientes', '3794222222', '1992-08-25', '27-10000002-4', 'maria.gomez@email.com'),
+('10000003', 'Carlos', 'López', 'W3400', 'Junín', 'Corrientes', '789', 'Corrientes', '3794333333', '1985-01-15', '20-10000003-5', 'carlos.lopez@email.com'),
+('10000004', 'Ana', 'Martínez', 'W3400', 'Pellegrini', 'Corrientes', '101', 'Corrientes', '3794444444', '1995-11-30', '27-10000004-6', 'ana.martinez@email.com'),
+('10000005', 'Lucas', 'Rodríguez', 'W3400', '9 de Julio', 'Corrientes', '202', 'Corrientes', '3794555555', '1990-03-18', '20-10000005-7', 'lucas.rodriguez@email.com'),
+('10000006', 'Sofia', 'Fernández', 'W3400', 'Córdoba', 'Corrientes', '303', 'Corrientes', '3794666666', '1998-07-22', '27-10000006-8', 'sofia.fernandez@email.com'),
+('10000007', 'Diego', 'Sánchez', 'W3400', 'Mendoza', 'Corrientes', '404', 'Corrientes', '3794777777', '1987-12-05', '20-10000007-9', 'diego.sanchez@email.com'),
+('10000008', 'Laura', 'Díaz', 'W3400', 'Salta', 'Corrientes', '505', 'Corrientes', '3794888888', '1993-04-10', '27-10000008-0', 'laura.diaz@email.com'),
+('10000009', 'Gonzalo', 'Álvarez', 'W3400', 'La Rioja', 'Corrientes', '606', 'Corrientes', '3794999999', '1982-09-08', '20-10000009-1', 'gonzalo.alvarez@email.com'),
+('10000010', 'Camila', 'Romero', 'W3400', 'Entre Ríos', 'Corrientes', '707', 'Corrientes', '3794000000', '2000-02-14', '27-10000010-2', 'camila.romero@email.com');
+GO
+
+-- 2. Insertar 10 Empleados (Referenciando a las personas 10000001 a 10000010)
+INSERT INTO EMPLEADO (dni_Empleado, numero_legajo, rol) VALUES 
+('10000001', 5001, 'Cajero'),
+('10000002', 5002, 'Cajero'),
+('10000003', 5003, 'Vendedor'),
+('10000004', 5004, 'Vendedor'),
+('10000005', 5005, 'Supervisor'),
+('10000006', 5006, 'Cajero'),
+('10000007', 5007, 'Vendedor'),
+('10000008', 5008, 'Encargado'),
+('10000009', 5009, 'Cajero'),
+('10000010', 5010, 'Atención al Cliente');
+GO
+
+-- 3. Insertar 10 Clientes (Referenciando a las mismas personas para que tengan perfil de cliente)
+INSERT INTO CLIENTE (dni_Cliente) VALUES 
+('10000001'),
+('10000002'),
+('10000003'),
+('10000004'),
+('10000005'),
+('10000006'),
+('10000007'),
+('10000008'),
+('10000009'),
+('10000010');
+GO
+
+-- 4. Insertar 10 Medios de Pago
+INSERT INTO MEDIO_DE_PAGO (id_medio_de_pago, [Descripción]) VALUES 
+(1, 'Efectivo ARS'),
+(2, 'Tarjeta de Débito Visa'),
+(3, 'Tarjeta de Débito Mastercard'),
+(4, 'Tarjeta de Crédito Visa'),
+(5, 'Tarjeta de Crédito Mastercard'),
+(6, 'Mercado Pago - QR'),
+(7, 'Transferencia Bancaria CBU'),
+(8, 'Cuenta DNI'),
+(9, 'MODO'),
+(10, 'Cheque Pago Diferido');
+GO
+
+-- 5. Insertar 10 Ventas
+INSERT INTO VENTA (numero_ticket, fecha_hora, Subtotal, iva, descuento, total, dni_Empleado, dni_Cliente) VALUES 
+(1001, '2026-03-01 09:15:00', 10000.00, 2100.00, 0.00, 12100.00, '10000001', '10000002'),
+(1002, '2026-03-02 10:30:00', 15000.00, 3150.00, 1000.00, 17150.00, '10000002', '10000003'),
+(1003, '2026-03-05 11:45:00', 8500.00, 1785.00, 500.00, 9785.00, '10000001', '10000004'),
+(1004, '2026-03-10 14:20:00', 25000.00, 5250.00, 2000.00, 28250.00, '10000006', '10000005'),
+(1005, '2026-03-12 16:00:00', 5000.00, 1050.00, 0.00, 6050.00, '10000009', '10000006'),
+(1006, '2026-03-15 17:10:00', 12000.00, 2520.00, 1200.00, 13320.00, '10000001', '10000007'),
+(1007, '2026-03-18 18:35:00', 30000.00, 6300.00, 3000.00, 33300.00, '10000002', '10000008'),
+(1008, '2026-03-20 19:00:00', 7400.00, 1554.00, 0.00, 8954.00, '10000006', '10000009'),
+(1009, '2026-03-25 20:15:00', 18000.00, 3780.00, 1500.00, 20280.00, '10000009', '10000010'),
+(1010, '2026-03-28 21:00:00', 45000.00, 9450.00, 5000.00, 49450.00, '10000002', '10000001');
+GO
+
+
+
+
+
