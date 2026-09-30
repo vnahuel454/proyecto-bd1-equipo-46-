@@ -2,9 +2,7 @@
 
 ## 0FN
 
-Comprobante de venta sin normalizar. Los productos comprados y los medios de pago son grupos repetitivos en una misma celda:
-
-> **Nota metodológica:** Para que el proceso de normalización alcance a todo el subsistema transaccional y no se limite a la visualización de un ticket impreso, se toma la estructura de la venta integrada con los requerimientos y el diccionario de datos del negocio (RN.01 a RN.08).
+Comprobante de venta sin normalizar. Los productos comprados y los medios de pago son grupos repetitivos en el comprobante. Para abarcar el circuito transaccional completo (RN.01 a RN.08), el análisis toma la estructura de la venta junto con el catálogo de artículos, clientes y formas de pago:
 
 | Nro ticket |   Fecha y hora   | Cajero                          | Cliente                     | Productos comprados                                                     | Medios de pago                              | Total |
 | :--------: | :--------------: | :------------------------------ | :-------------------------- | :---------------------------------------------------------------------- | :------------------------------------------ | :---: |
@@ -104,12 +102,12 @@ Clave primaria: id_medio_de_pago
 
 Una relación está en 3FN si está en 2FN y no existen dependencias funcionales transitivas de atributos no primos respecto a la clave primaria (ningún atributo no primo depende funcionalmente de otro atributo no primo).
 
-- En **PRODUCTO**: existe la dependencia transitiva `id_producto -> id_categoria -> nombre_categoria`. El nombre de la categoría depende de `id_categoria` (que no es superclave de PRODUCTO). Para eliminarla, se separa en **CATEGORIA (id_categoria, nombre)**. El atributo `detalle` permanece directamente en **PRODUCTO**, ya que depende de forma elemental y directa de la clave (`id_producto -> detalle`), cumpliendo plenamente con 3FN y evitando tablas 1:1 superfluas.
+- En **PRODUCTO**: existe la dependencia transitiva `id_producto -> id_categoria -> nombre_categoria`. El nombre de la categoría depende de `id_categoria` (que no es superclave de PRODUCTO). Para eliminarla, se separa en **CATEGORIA (id_categoria, nombre)**. El atributo `detalle` permanece directamente en **PRODUCTO**, ya que depende de forma directa de la clave (`id_producto -> detalle`), cumpliendo 3FN sin necesidad de crear una tabla 1:1 separada.
 - En **VENTA**: existen dependencias transitivas hacia los datos de personas: `numero_ticket -> dni_empleado -> {nombre, legajo, rol}` y `numero_ticket -> dni_cliente -> nombre_cliente`. Se eliminan separando las entidades de personal y compradores. Para evitar duplicar atributos comunes (nombre, apellido, contacto, domicilio) y asegurar una única fuente de identidad sin redundancia, se estructuran bajo la superclase **PERSONA** con sus subtipos **EMPLEADO** y **CLIENTE** (jerarquía solapada y parcial, acorde al DER).
 
-> **Nota sobre valores calculados en VENTA:** `subtotal`, `iva`, `descuento` y `total` se conservan en `VENTA` como una desnormalización controlada por exigencia de inmutabilidad fiscal y auditoría contable (RN.08), preservando el importe histórico facturado ante eventuales cambios tributarios o de precios de catálogo.
->
-> **Nota sobre domicilios:** Los atributos `ciudad`, `codigo_postal` y `provincia` se conservan atómicamente en `PERSONA` y `PROVEEDOR` como decisión de diseño para no sobrefragmentar el modelo en tablas accesorias de localidades, manteniéndose dentro del esquema acordado de 11 tablas.
+Los campos `subtotal`, `iva`, `descuento` y `total` se conservan en `VENTA` para asegurar la inmutabilidad de la facturación emitida (RN.08), evitando que cambios posteriores en precios o alícuotas alteren los registros históricos.
+
+Los atributos de dirección (`ciudad`, `codigo_postal`, `provincia`) se mantienen como datos directos en `PERSONA` y `PROVEEDOR` para evitar tablas accesorias de localidades, conservando el diseño dentro de las 11 tablas acordadas.
 
 ### Separación de CATEGORIA
 
@@ -157,8 +155,6 @@ VENTA:
 | :----------------: | :--------------: | :------: | :-----: | :-------: | :---: | :---------------: | :--------------: |
 |        101         | 20/09/2026 10:15 | $4214.88 | $885.12 |   $0.00   | $5100 |     30111222      |     35123456     |
 |        102         | 20/09/2026 10:30 | $1239.67 | $260.33 |   $0.00   | $1500 |     30111222      |     28987654     |
-
-subtotal, iva, descuento y total quedan en VENTA porque son valores propios de esa operación, aunque después cambien los precios de los productos.
 
 ---
 

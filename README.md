@@ -2,9 +2,8 @@
 
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=14&pause=1200&color=00529B&center=true&vCenter=true&width=620&lines=Licenciatura+en+Sistemas+de+Informaci%C3%B3n+%E2%80%94+FaCENA+%28UNNE%29;Bases+de+Datos+I+%E2%80%94+2026;Equipo+46" alt="Typing SVG" /></a>
 
-# Proyecto Estudio
-
-## Supermercado "El Sol"
+# Supermercado "El Sol"
+### Bases de Datos I (2026) - FaCENA, UNNE
 
 <p>
   <img src="https://img.shields.io/badge/UNNE-FaCENA-00529B?style=for-the-badge" alt="Universidad"/>
@@ -19,17 +18,15 @@
 
 ## Descripción
 
-Proyecto de estudio correspondiente a la cátedra Bases de Datos I (FaCENA, UNNE). Consiste en el diseño conceptual, lógico e implementación de una base de datos relacional para el **Supermercado "El Sol"**, un comercio minorista de consumo masivo.
+Trabajo práctico integrador de la cátedra Bases de Datos I (FaCENA - UNNE). El proyecto comprende el análisis del negocio, modelado conceptual y lógico, y la implementación en SQL Server de la base de datos para el Supermercado "El Sol", un comercio minorista de consumo masivo.
 
 ## Objetivos del sistema
 
-|  #  | Objetivo                                                                             |
-| :-: | :----------------------------------------------------------------------------------- |
-|  1  | Registrar ventas en línea de cajas con detalle de artículos, cajero y medios de pago |
-|  2  | Mantener el precio histórico de venta congelado al momento de cada compra            |
-|  3  | Monitorear el stock con alertas de reposición entre depósito y góndolas              |
-|  4  | Gestionar clientes frecuentes para promociones y ventas a consumidor final           |
-|  5  | Administrar el reabastecimiento de mercadería con la red de proveedores              |
+- Registrar ventas en línea de cajas con detalle de artículos, cajero y múltiples medios de pago.
+- Preservar el precio unitario histórico cobrado al momento de cada compra.
+- Controlar el stock con alertas automáticas de reposición para depósito y góndolas.
+- Gestionar clientes registrados para beneficios y registrar ventas a consumidor final.
+- Administrar el abastecimiento de mercadería con la red de proveedores.
 
 ## Estructura del repositorio
 
@@ -62,7 +59,7 @@ proyecto-bd1-equipo-46/
 ## Documentación
 
 <details>
-<summary><b>Etapa 01 — Requerimientos y dominio del negocio</b></summary>
+<summary><b>Etapa 01: Requerimientos y dominio del negocio</b></summary>
 <br>
 
 - [Descripción del caso de estudio](docs/etapa-01/descripcion-caso-estudio.md)
@@ -72,7 +69,7 @@ proyecto-bd1-equipo-46/
 </details>
 
 <details>
-<summary><b>Etapa 02 — Modelado conceptual y relacional</b></summary>
+<summary><b>Etapa 02: Modelado conceptual y relacional</b></summary>
 <br>
 
 - [Diagrama Entidad-Relación (DER)](docs/etapa-02/der/SupermercadoElSol-DER-final.png)
@@ -96,7 +93,7 @@ proyecto-bd1-equipo-46/
   <img src="docs/etapa-02/SupermercadoElSol-modelo-relacional(corregido).png" alt="Diagrama del Modelo Relacional" width="100%">
 </p>
 
-## Integrantes — Equipo 46
+## Integrantes (Equipo 46)
 
 <div align="center">
 
