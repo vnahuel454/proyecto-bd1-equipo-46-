@@ -1,10 +1,9 @@
 USE SupermercadoElSol; 
 GO
 
-IF OBJECT_ID('CLIENTE', 'U') IS NOT NULL 
-DROP TABLE CLIENTE; IF OBJECT_ID('EMPLEADO', 'U') IS NOT NULL 
-DROP TABLE EMPLEADO; IF OBJECT_ID('PERSONA', 'U') IS NOT NULL 
-DROP TABLE PERSONA;
+IF OBJECT_ID('CLIENTE', 'U') IS NOT NULL DROP TABLE CLIENTE; 
+IF OBJECT_ID('EMPLEADO', 'U') IS NOT NULL DROP TABLE EMPLEADO; 
+IF OBJECT_ID('PERSONA', 'U') IS NOT NULL DROP TABLE PERSONA;
 GO
 
 CREATE TABLE PERSONA ( 
@@ -18,12 +17,12 @@ CREATE TABLE PERSONA (
 	provincia VARCHAR(50) NOT NULL, 
 	codigo_postal VARCHAR(10) NOT NULL, 
 	telefono VARCHAR(20) NULL, 
-	correo_electronico VARCHAR(100) NULL, 
+	correo_electronico VARCHAR(100) NOT NULL, 
 	fecha_nacimiento DATE NOT NULL, 
 
 	CONSTRAINT pk_persona PRIMARY KEY (dni), 
 	CONSTRAINT uq_persona_cuil UNIQUE (cuil), 
-	CONSTRAINT uq_persona_email UNIQUE (email), 
+	CONSTRAINT uq_persona_email UNIQUE (correo_electronico), 
 	CONSTRAINT ck_persona_dni_positivo CHECK (dni >= 0)
  );
  GO
