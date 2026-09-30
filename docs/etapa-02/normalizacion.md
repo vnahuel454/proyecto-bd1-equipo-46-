@@ -4,6 +4,8 @@
 
 Comprobante de venta sin normalizar. Los productos comprados y los medios de pago son grupos repetitivos en una misma celda:
 
+> **Nota metodológica:** Para que el proceso de normalización alcance a todo el subsistema transaccional y no se limite a la visualización de un ticket impreso, se toma la estructura de la venta integrada con los requerimientos y el diccionario de datos del negocio (RN.01 a RN.08).
+
 | Nro ticket |   Fecha y hora   | Cajero                          | Cliente                     | Productos comprados                                                     | Medios de pago                              | Total |
 | :--------: | :--------------: | :------------------------------ | :-------------------------- | :---------------------------------------------------------------------- | :------------------------------------------ | :---: |
 |    101     | 20/09/2026 10:15 | Juan Pérez (Legajo 104, Cajero) | Carlos Gómez (DNI 35123456) | Leche Entera 1L (2 un. x $1200),<br>Fideos Guiseros 500g (3 un. x $900) | Efectivo ($3000),<br>Tarjeta Débito ($2100) | $5100 |
@@ -13,7 +15,7 @@ Comprobante de venta sin normalizar. Los productos comprados y los medios de pag
 
 ## 1FN
 
-Se separa la venta en tres tablas atómicas para evitar mezclar productos con medios de pago:
+Una relación está en 1FN si todos sus atributos son atómicos y no existen grupos repetitivos. Se descompone la venta en tres relaciones para eliminar los dos grupos repetitivos independientes (productos y cobros) y atomizar los datos de cajero y cliente (evitando además un producto cartesiano espurio entre líneas de venta y medios de pago):
 
 ### VENTA
 
@@ -48,9 +50,11 @@ Clave primaria compuesta: {numero_ticket, id_medio_de_pago}
 
 ## 2FN
 
-En LINEAS_VENTA los datos del artículo dependen solo de id_producto y no de todo el ticket: id_producto -> {codigo_barra, marca, id_categoria, nombre_categoria, detalle, precio_actual}. Solo la cantidad y el precio cobrado dependen de la clave completa: {numero_ticket, id_producto} -> {cantidad, precio_unitario_cobrado}. Por eso separamos los datos del producto en PRODUCTO.
+Una relación está en 2FN si está en 1FN y ningún atributo no primo depende parcialmente de una clave primaria compuesta (es decir, todo atributo no primo depende funcionalmente de la clave primaria completa).
 
-En COBROS_VENTA pasa lo mismo: id_medio_de_pago -> descripcion_medio depende solo del medio de pago. Únicamente el monto imputado depende de toda la clave: {numero_ticket, id_medio_de_pago} -> monto_imputado. Por eso separamos MEDIO_DE_PAGO.
+- **VENTA:** Ya se encuentra en 2FN debido a que su clave primaria es simple (`numero_ticket`), imposibilitando por definición formal la existencia de dependencias parciales.
+- **LINEAS_VENTA (PK compuesta `{numero_ticket, id_producto}`):** Los atributos del producto dependen únicamente de `id_producto` y no del ticket completo: `id_producto -> {codigo_barra, marca, id_categoria, nombre_categoria, detalle, precio_actual}`. Solo `cantidad` y `precio_unitario_cobrado` dependen de la clave compuesta completa: `{numero_ticket, id_producto} -> {cantidad, precio_unitario_cobrado}`. Por ende, para eliminar esta dependencia parcial separamos los datos del artículo en **PRODUCTO**.
+- **COBROS_VENTA (PK compuesta `{numero_ticket, id_medio_de_pago}`):** `descripcion_medio` depende exclusivamente de `id_medio_de_pago`: `id_medio_de_pago -> descripcion_medio`. Únicamente `monto_imputado` depende de la clave compuesta completa: `{numero_ticket, id_medio_de_pago} -> monto_imputado`. Por ende, separamos **MEDIO_DE_PAGO**.
 
 ### DETALLE_VENTA
 
@@ -98,19 +102,24 @@ Clave primaria: id_medio_de_pago
 
 ## 3FN
 
-En PRODUCTO, nombre_categoria depende de id_categoria y no del producto directamente: id_producto -> id_categoria -> nombre_categoria. Se separa en CATEGORIA. El detalle del producto se mueve a DESCRIPCION_PRODUCTO para no repetirlo en DETALLE_VENTA.
+Una relación está en 3FN si está en 2FN y no existen dependencias funcionales transitivas de atributos no primos respecto a la clave primaria (ningún atributo no primo depende funcionalmente de otro atributo no primo).
 
-En VENTA, nombre_empleado, legajo y rol dependen de dni_empleado, y nombre_cliente depende de dni_cliente: numero_ticket -> dni_empleado -> {nombre, legajo, rol} y numero_ticket -> dni_cliente -> nombre_cliente. Los datos personales se trasladan a PERSONA, con EMPLEADO y CLIENTE como subtipos.
+- En **PRODUCTO**: existe la dependencia transitiva `id_producto -> id_categoria -> nombre_categoria`. El nombre de la categoría depende de `id_categoria` (que no es superclave de PRODUCTO). Para eliminarla, se separa en **CATEGORIA (id_categoria, nombre)**. El atributo `detalle` permanece directamente en **PRODUCTO**, ya que depende de forma elemental y directa de la clave (`id_producto -> detalle`), cumpliendo plenamente con 3FN y evitando tablas 1:1 superfluas.
+- En **VENTA**: existen dependencias transitivas hacia los datos de personas: `numero_ticket -> dni_empleado -> {nombre, legajo, rol}` y `numero_ticket -> dni_cliente -> nombre_cliente`. Se eliminan separando las entidades de personal y compradores. Para evitar duplicar atributos comunes (nombre, apellido, contacto, domicilio) y asegurar una única fuente de identidad sin redundancia, se estructuran bajo la superclase **PERSONA** con sus subtipos **EMPLEADO** y **CLIENTE** (jerarquía solapada y parcial, acorde al DER).
 
-### Separación de CATEGORIA y DESCRIPCION_PRODUCTO
+> **Nota sobre valores calculados en VENTA:** `subtotal`, `iva`, `descuento` y `total` se conservan en `VENTA` como una desnormalización controlada por exigencia de inmutabilidad fiscal y auditoría contable (RN.08), preservando el importe histórico facturado ante eventuales cambios tributarios o de precios de catálogo.
+>
+> **Nota sobre domicilios:** Los atributos `ciudad`, `codigo_postal` y `provincia` se conservan atómicamente en `PERSONA` y `PROVEEDOR` como decisión de diseño para no sobrefragmentar el modelo en tablas accesorias de localidades, manteniéndose dentro del esquema acordado de 11 tablas.
+
+### Separación de CATEGORIA
 
 PRODUCTO:
 
-| id_producto (PK) | codigo_barra | marca         | precio_actual | stock_actual | stock_minimo | id_categoria (FK) |
-| :--------------: | :----------: | :------------ | :-----------: | :----------: | :----------: | :---------------: |
-|        1         | 779123456001 | La Serenísima |     $1200     |      50      |      10      |        10         |
-|        2         | 779123456002 | Matarazzo     |     $900      |     120      |      20      |        20         |
-|        3         | 779123456003 | Gallo         |     $1500     |      80      |      15      |        20         |
+| id_producto (PK) | codigo_barra | detalle                | marca         | precio_actual | stock_actual | stock_minimo | id_categoria (FK) |
+| :--------------: | :----------: | :--------------------- | :------------ | :-----------: | :----------: | :----------: | :---------------: |
+|        1         | 779123456001 | Leche Entera 1L sachet | La Serenísima |     $1200     |      50      |      10      |        10         |
+|        2         | 779123456002 | Fideos Guiseros 500g   | Matarazzo     |     $900      |     120      |      20      |        20         |
+|        3         | 779123456003 | Arroz Blanco 1kg       | Gallo         |     $1500     |      80      |      15      |        20         |
 
 CATEGORIA:
 
@@ -118,14 +127,6 @@ CATEGORIA:
 | :---------------: | :------ |
 |        10         | Lácteos |
 |        20         | Almacén |
-
-DESCRIPCION_PRODUCTO:
-
-| id_descripcion (PK) | detalle                | id_producto (FK) |
-| :-----------------: | :--------------------- | :--------------: |
-|          1          | Leche Entera 1L sachet |        1         |
-|          2          | Fideos Guiseros 500g   |        2         |
-|          3          | Arroz Blanco 1kg       |        3         |
 
 ### Separación de PERSONA, EMPLEADO y CLIENTE
 
@@ -177,13 +178,9 @@ FK: dni_Cliente -> PERSONA(DNI)
 CATEGORIA (id_categoria, nombre)  
 PK: id_categoria
 
-PRODUCTO (id_producto, codigo_barra, marca, precio_actual, stock_actual, stock_minimo, id_categoria)  
+PRODUCTO (id_producto, codigo_barra, detalle, marca, precio_actual, stock_actual, stock_minimo, id_categoria)  
 PK: id_producto  
 FK: id_categoria -> CATEGORIA(id_categoria)
-
-DESCRIPCION_PRODUCTO (id_descripcion, detalle, id_producto)  
-PK: id_descripcion  
-FK: id_producto -> PRODUCTO(id_producto)
 
 MEDIO_DE_PAGO (id_medio_de_pago, descripcion)  
 PK: id_medio_de_pago

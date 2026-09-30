@@ -102,7 +102,7 @@ proyecto-bd1-equipo-46/
 
 |       Integrante        |
 | :---------------------: |
-|      Espinola Luz       |
+|      Espíndola Luz      |
 |  López Alfredo Gabriel  |
 | Maciel Jorge Alejandro  |
 |     Vega José María     |
