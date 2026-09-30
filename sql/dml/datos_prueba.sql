@@ -31,3 +31,11 @@ GO
 INSERT INTO CLIENTE (dni) VALUES 
 (29999000), (41987654), (34456789), (37654321), (42111222), (38333444), (35111222), (40777888); 
 GO
+
+-- 1\. Ver todas las personas 
+SELECT * FROM PERSONA; 
+-- 2\. Ver todos los empleados 
+SELECT * FROM EMPLEADO; 
+-- 3\. Ver todos los clientes 
+SELECT * FROM CLIENTE; 
+GO
