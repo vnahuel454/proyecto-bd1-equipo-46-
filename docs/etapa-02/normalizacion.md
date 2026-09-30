@@ -13,7 +13,7 @@ Comprobante de venta sin normalizar. Los productos comprados y los medios de pag
 
 ## 1FN
 
-Una relación está en 1FN si todos sus atributos son atómicos y no existen grupos repetitivos. Se descompone la venta en tres relaciones para eliminar los dos grupos repetitivos independientes (productos y cobros) y atomizar los datos de cajero y cliente (evitando además un producto cartesiano espurio entre líneas de venta y medios de pago):
+Se separa la venta en tres tablas atómicas para evitar mezclar productos con medios de pago y eliminar los grupos repetitivos:
 
 ### VENTA
 
@@ -48,11 +48,10 @@ Clave primaria compuesta: {numero_ticket, id_medio_de_pago}
 
 ## 2FN
 
-Una relación está en 2FN si está en 1FN y ningún atributo no primo depende parcialmente de una clave primaria compuesta (es decir, todo atributo no primo depende funcionalmente de la clave primaria completa).
+VENTA ya tiene clave primaria simple (`numero_ticket`), por lo que no tiene dependencias parciales. El análisis se aplica sobre las tablas con clave compuesta:
 
-- **VENTA:** Ya se encuentra en 2FN debido a que su clave primaria es simple (`numero_ticket`), imposibilitando por definición formal la existencia de dependencias parciales.
-- **LINEAS_VENTA (PK compuesta `{numero_ticket, id_producto}`):** Los atributos del producto dependen únicamente de `id_producto` y no del ticket completo: `id_producto -> {codigo_barra, marca, id_categoria, nombre_categoria, detalle, precio_actual}`. Solo `cantidad` y `precio_unitario_cobrado` dependen de la clave compuesta completa: `{numero_ticket, id_producto} -> {cantidad, precio_unitario_cobrado}`. Por ende, para eliminar esta dependencia parcial separamos los datos del artículo en **PRODUCTO**.
-- **COBROS_VENTA (PK compuesta `{numero_ticket, id_medio_de_pago}`):** `descripcion_medio` depende exclusivamente de `id_medio_de_pago`: `id_medio_de_pago -> descripcion_medio`. Únicamente `monto_imputado` depende de la clave compuesta completa: `{numero_ticket, id_medio_de_pago} -> monto_imputado`. Por ende, separamos **MEDIO_DE_PAGO**.
+- En **LINEAS_VENTA**: los datos del artículo (`codigo_barra`, `marca`, `id_categoria`, `nombre_categoria`, `detalle`, `precio_actual`) dependen solo de `id_producto` y no del ticket completo: `id_producto -> {codigo_barra, marca, id_categoria, nombre_categoria, detalle, precio_actual}`. Solo la cantidad y el precio cobrado dependen de la combinación completa: `{numero_ticket, id_producto} -> {cantidad, precio_unitario_cobrado}`. Por eso separamos los datos del producto en **PRODUCTO**.
+- En **COBROS_VENTA**: la descripción depende únicamente de `id_medio_de_pago`: `id_medio_de_pago -> descripcion_medio`. Solo el monto imputado depende de toda la clave: `{numero_ticket, id_medio_de_pago} -> monto_imputado`. Por eso separamos **MEDIO_DE_PAGO**.
 
 ### DETALLE_VENTA
 
@@ -100,10 +99,10 @@ Clave primaria: id_medio_de_pago
 
 ## 3FN
 
-Una relación está en 3FN si está en 2FN y no existen dependencias funcionales transitivas de atributos no primos respecto a la clave primaria (ningún atributo no primo depende funcionalmente de otro atributo no primo).
+En este paso se resuelven las dependencias transitivas:
 
-- En **PRODUCTO**: existe la dependencia transitiva `id_producto -> id_categoria -> nombre_categoria`. El nombre de la categoría depende de `id_categoria` (que no es superclave de PRODUCTO). Para eliminarla, se separa en **CATEGORIA (id_categoria, nombre)**. El atributo `detalle` permanece directamente en **PRODUCTO**, ya que depende de forma directa de la clave (`id_producto -> detalle`), cumpliendo 3FN sin necesidad de crear una tabla 1:1 separada.
-- En **VENTA**: existen dependencias transitivas hacia los datos de personas: `numero_ticket -> dni_empleado -> {nombre, legajo, rol}` y `numero_ticket -> dni_cliente -> nombre_cliente`. Se eliminan separando las entidades de personal y compradores. Para evitar duplicar atributos comunes (nombre, apellido, contacto, domicilio) y asegurar una única fuente de identidad sin redundancia, se estructuran bajo la superclase **PERSONA** con sus subtipos **EMPLEADO** y **CLIENTE** (jerarquía solapada y parcial, acorde al DER).
+- En **PRODUCTO**: `nombre_categoria` depende de `id_categoria` y no del producto directamente (`id_producto -> id_categoria -> nombre_categoria`). Por eso se aísla en **CATEGORIA (id_categoria, nombre)**. El atributo `detalle` permanece directamente en **PRODUCTO** ya que describe al artículo de forma directa.
+- En **VENTA**: los datos personales dependen de los DNI de cada persona (`numero_ticket -> dni_empleado -> {nombre, legajo, rol}` y `numero_ticket -> dni_cliente -> nombre_cliente`). Se separan los datos de empleados y clientes, unificando los atributos comunes bajo la superclase **PERSONA** con sus subtipos **EMPLEADO** y **CLIENTE** para evitar redundancias.
 
 Los campos `subtotal`, `iva`, `descuento` y `total` se conservan en `VENTA` para asegurar la inmutabilidad de la facturación emitida (RN.08), evitando que cambios posteriores en precios o alícuotas alteren los registros históricos.
 
