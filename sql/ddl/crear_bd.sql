@@ -52,3 +52,114 @@ CREATE TABLE CLIENTE (
         ON UPDATE CASCADE
 );
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+CREATE TABLE DETALLE_VENTA (
+    numero_ticket INT NOT NULL,
+    id_producto INT NOT NULL,
+    Cantidad INT NOT NULL,
+    precio_unitario_cobrado DECIMAL(10,2) NOT NULL,
+    
+    fecha_creacion DATETIME DEFAULT GETDATE() NOT NULL,
+    usuario_creacion VARCHAR(100) DEFAULT SYSTEM_USER NOT NULL,
+    
+    CONSTRAINT PK_DETALLE_VENTA PRIMARY KEY (numero_ticket, id_producto),
+    CONSTRAINT CK_DETALLE_VENTA_Cantidad CHECK (Cantidad >= 0)
+);
+
+CREATE TABLE SE_ABONA_CON (
+    numero_ticket INT NOT NULL,
+    id_medio_de_pago INT NOT NULL,
+    monto_imputado DECIMAL(10,2) NOT NULL,
+    
+    fecha_creacion DATETIME DEFAULT GETDATE() NOT NULL,
+    usuario_creacion VARCHAR(100) DEFAULT SYSTEM_USER NOT NULL,
+    
+    CONSTRAINT PK_SE_ABONA_CON PRIMARY KEY (numero_ticket, id_medio_de_pago),
+    CONSTRAINT CK_SE_ABONA_CON_Monto CHECK (monto_imputado > 0)
+);
+
+
+
+
+
+
+
+
+
+
+
