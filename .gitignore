@@ -1,5 +1,7 @@
 # Archivos y notas locales
-manifiesto.md
+manifiesto*.md
+equipo*.md
+*manifiesto*.md
 
 # Editores y sistema
 .vscode/
