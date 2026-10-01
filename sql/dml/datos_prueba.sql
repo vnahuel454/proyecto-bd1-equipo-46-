@@ -50,7 +50,7 @@ INSERT INTO PRODUCTO (id_producto, codigo_barra, marca, detalle, precio_actual, 
 (8, '779123456008', 'Pepsi', 'Gaseosa Cola Light 2.25L', 2000, 45, 12, 30);
 GO
 
-INSERT INTO PROVEEDOR (cuit, razon_social, telephone, calle, numero, ciudad, codigo_postal, provincia) VALUES 
+INSERT INTO PROVEEDOR (cuit, razon_social, telefono, calle, numero, ciudad, codigo_postal, provincia) VALUES 
 ('30501234568', 'Mastellone Hermanos S.A.', '01144808000', 'Av. Almirante Brown', '957', 'General Rodríguez', '1748', 'Buenos Aires'),
 ('30502345679', 'Molinos Río de la Plata S.A.', '01143401000', 'Uruguay', '4075', 'Victoria', '1644', 'Buenos Aires'),
 ('30503456780', 'Arrocera San Salvador S.A.', '03454911222', 'Ruta Nacional 18', 'Km 2', 'San Salvador', '3218', 'Entre Ríos'),
