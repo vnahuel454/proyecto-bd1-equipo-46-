@@ -52,7 +52,7 @@ proyecto-bd1-equipo-46/
 | :---: | :--------------------------------------------------- | :----------------------------------------------------------------------------: |
 |  01   | Requerimientos y dominio del negocio                 |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
 |  02   | Modelo conceptual, relacional y normalización        |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
-|  03   | Implementación de la base de datos (DDL y DML)       | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
+|  03   | Implementación de la base de datos (DDL y DML)       |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
 |  04   | Consultas del negocio y casos de uso                 | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
 |  05   | Temas técnicos (procedimientos, triggers, seguridad) | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
 
@@ -78,6 +78,15 @@ proyecto-bd1-equipo-46/
 - [Decisiones de diseño del Modelo Relacional](docs/etapa-02/decisiones-modelo-relacional.md)
 - [Modelo Relacional](docs/etapa-02/SupermercadoElSol-modelo-relacional(corregido).png)
 - [Normalización](docs/etapa-02/normalizacion.md)
+
+</details>
+
+<details>
+<summary><b>Etapa 03: Implementación física (Scripts SQL)</b></summary>
+<br>
+
+- [Script DDL (crear_bd.sql)](sql/ddl/crear_bd.sql)
+- [Script DML (datos_prueba.sql)](sql/dml/datos_prueba.sql)
 
 </details>
 
