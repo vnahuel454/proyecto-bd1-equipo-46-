@@ -1,4 +1,4 @@
-USE SupermercadoElSol_test;
+USE SupermercadoElSol;
 GO
 
 DECLARE @numero_ticket INT = 1001;
