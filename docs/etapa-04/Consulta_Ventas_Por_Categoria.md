@@ -71,4 +71,4 @@ Explicación Técnica
 
 
 
-  Archivo: sql/consultas/consulta_ventas_por_categoria
+  Archivo: sql/consultas/consulta_ventas_por_categoria.sql

@@ -147,14 +147,17 @@ Scripts SQL:
 <br>
 
 Documentación de consultas:
+- [Casos de uso del sistema](docs/etapa-04/casos-uso.md)
 - [Consulta 1: Comprobante de venta (Factura)](docs/etapa-04/comprobante-venta.md)
 - [Consulta 2a: Ventas por vendedor](docs/etapa-04/consulta-02a-ventas-por-vendedor.md)
+- [Consulta 2b: Ventas por categoría](docs/etapa-04/Consulta_Ventas_Por_Categoria.md)
 - [Consulta 3a: Clientes con compras superiores a $5000 (HAVING)](docs/etapa-04/consulta-avanzada.md)
 - [Consulta 3b: Ventas superiores al promedio (Subconsulta)](docs/etapa-04/consulta-03b-subconsulta.md)
 
 Scripts SQL:
 - [Consulta 1 (comprobante_venta.sql)](sql/consultas/comprobante_venta.sql)
 - [Consulta 2a (02a_ventas_por_vendedor.sql)](sql/consultas/02a_ventas_por_vendedor.sql)
+- [Consulta 2b (consulta_ventas_por_categoria.sql)](sql/consultas/consulta_ventas_por_categoria.sql)
 - [Consulta 3a (03a_clientes_compras_mayores_5000.sql)](sql/consultas/03a_clientes_compras_mayores_5000.sql)
 - [Consulta 3b (03b_consulta_avanzada_subconsulta.sql)](sql/consultas/03b_consulta_avanzada_subconsulta.sql)
 

@@ -1,6 +1,9 @@
+USE SupermercadoElSol;
+GO
+
 --===========================================================
 --           ******** CONSULTA 1 **********
--- Consulta de ventas por categorias en el mes de marzo 2026
+-- Consulta de ventas por categorías en el mes de marzo 2026
 --===========================================================
 
 SELECT 
@@ -17,17 +20,19 @@ WHERE v.fecha_hora >= '2026-03-01 00:00:00'
   AND v.fecha_hora <= '2026-03-31 23:59:59'
 GROUP BY c.id_categoria, c.nombre
 ORDER BY total_recaudado DESC;
+GO
 
-id_categoria categoria cantidad_tikets  total_recaudado  total_unidades_vendidas 
-40	         Limpieza	     1	           13500.00	             10
-20	         Almacén	     3	            9900.00	              8
-10	         Lácteos	     2	            6750.00	              5
-30	         Bebidas	     2	            4100.00	              2
+-- Resultado obtenido con los datos de prueba:
+-- id_categoria  categoria   cantidad_tickets  total_recaudado  total_unidades_vendidas 
+-- 40            Limpieza    1                 13500.00         10
+-- 20            Almacén     3                  9900.00          8
+-- 10            Lácteos     2                  6750.00          5
+-- 30            Bebidas     2                  4100.00          2
 
 
 --===========================================================
 --           ******** CONSULTA 2 **********
--- Consulta de ventas por categorias en el mes de marzo 2026
+-- Consulta de ventas por categorías en el mes de marzo 2026
 -- Pagados en Efectivo
 --===========================================================
 
@@ -48,13 +53,9 @@ WHERE v.fecha_hora >= '2026-03-01 00:00:00'
   AND mp.id_medio_de_pago = 1  -- Filtra exclusivamente pagos en efectivo
 GROUP BY c.id_categoria, c.nombre
 ORDER BY total_recaudado_efectivo DESC;
+GO
 
-id_categoria categoria cantidad_tikets_efectivo  total_recaudado_efectivo  total_unidades_vendidas 
-20	         Almacén	     3	                      9900.00	                       8
-10	         Lácteos	     2	                      6750.00	                       5
-
-
-
-
-
-
+-- Resultado obtenido con los datos de prueba:
+-- id_categoria  categoria   cantidad_tickets_efectivo  total_recaudado_efectivo  total_unidades_vendidas 
+-- 20            Almacén     3                          9900.00                   8
+-- 10            Lácteos     2                          6750.00                   5

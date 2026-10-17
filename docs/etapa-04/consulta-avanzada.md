@@ -55,5 +55,5 @@ ORDER BY monto_total_gastado DESC;
 - **Monto total neto:** Se eligió la columna `VENTA.total` para calcular el gasto acumulado debido a que este campo ya contempla el impacto final del IVA y los descuentos aplicados en la línea de caja.
 - **Control de exclusión:** Aquellos clientes registrados cuyo gasto total sea menor o igual a \$5.000 (como el caso de Romero, Patricia, que posee un único ticket por \$2.041) son omitidos correctamente por el motor para preservar la pureza del reporte VIP.
 
-Archivo con las consultas: `sql/consultas/consulta_avanzada.sql`
+Archivo con las consultas: `sql/consultas/03a_clientes_compras_mayores_5000.sql`
 
