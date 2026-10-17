@@ -53,7 +53,7 @@ proyecto-bd1-equipo-46/
 |  01   | Requerimientos y dominio del negocio                 |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
 |  02   | Modelo conceptual, relacional y normalización        |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
 |  03   | Implementación de la base de datos (DDL y DML)       |  ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square)  |
-|  04   | Consultas del negocio y casos de uso                 | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
+|  04   | Consultas del negocio y casos de uso                 | ![En progreso](https://img.shields.io/badge/-En%20progreso-F57C00?style=flat-square) |
 |  05   | Temas técnicos (procedimientos, triggers, seguridad) | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
 
 ## Documentación
@@ -87,6 +87,24 @@ proyecto-bd1-equipo-46/
 
 - [Script DDL (crear_bd.sql)](sql/ddl/crear_bd.sql)
 - [Script DML (datos_prueba.sql)](sql/dml/datos_prueba.sql)
+
+</details>
+
+<details>
+<summary><b>Etapa 04: Consultas del negocio y casos de uso</b></summary>
+<br>
+
+**Documentación de consultas:**
+- [Comprobante de venta (Factura)](docs/etapa-04/comprobante-venta.md)
+- [Consulta 2a: Ventas por vendedor](docs/etapa-04/consulta-02a-ventas-por-vendedor.md)
+- [Consulta 3b: Ventas superiores al promedio](docs/etapa-04/consulta-03b-subconsulta.md)
+- [Consulta 4: Clientes con compras superiores a $5000 (HAVING)](docs/etapa-04/consulta-avanzada.md)
+
+**Scripts SQL:**
+- [Comprobante de venta (comprobante_venta.sql)](sql/consultas/comprobante_venta.sql)
+- [Consulta 2a (02a_ventas_por_vendedor.sql)](sql/consultas/02a_ventas_por_vendedor.sql)
+- [Consulta 3b (03b_consulta_avanzada_subconsulta.sql)](sql/consultas/03b_consulta_avanzada_subconsulta.sql)
+- [Consulta 4 (03a_clientes_compras_mayores_5000.sql)](sql/consultas/03a_clientes_compras_mayores_5000.sql)
 
 </details>
 
