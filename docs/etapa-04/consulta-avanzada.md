@@ -38,16 +38,18 @@ HAVING SUM(v.total) > 5000.00
 ORDER BY monto_total_gastado DESC;
 ```
 
-## Resultado esperado (marzo de 2026)
+## Resultados esperado 
 
 | DNI | Cliente | Cantidad compras | Monto total gastado |
 |---|---|---|---|
 | 35111222 | Gómez, Carlos | 2 | 82750.00 |
-| 29999000 | Pérez, Juan | 2 | 24273.00 |
-| 37654321 | Benítez, Gonzalo | 1 | 14335.00 |
+| 29999000 | Pérez, Juan | 2 | 32380.00 |
+| 37654321 | Benítez, Gonzalo | 1 | 28250.00 |
+| 41987654 | Sánchez, Diego | 1 | 17150.00 |
+| 38333444 | Martínez, Laura | 1 | 13320.00 |
+| 34456789 | Romero, Patricia | 1 | 9785.00 |
 | 40777888 | López, María | 1 | 8954.00 |
-| 41987654 | Sánchez, Diego | 1 | 8075.00 |
-| 42111222 | Díaz, Florencia | 1 | 7078.50 |
+| 42111222 | Díaz, Florencia | 1 | 6050.00 |
 
 ## Decisiones tomadas
 
