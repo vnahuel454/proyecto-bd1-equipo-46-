@@ -82,7 +82,7 @@ Script: `scripts.sql`. Evidencias: carpeta `evidencias/`. Las pruebas se ejecuta
 
 **Observación sobre la numeración:** la prueba 4 recibe el ticket **1012**, el siguiente al 1011, aunque entre ambas hubo dos operaciones revertidas. No quedaron huecos.
 
-**Capturas:** `evidencias/prueba1_correcta.png`, `prueba2_stock_insuficiente.png`, `prueba3_atomicidad.png`, `prueba4_caso_limite.png`.
+**Capturas:** en `evidencias/`, una de Resultados y otra de Mensajes por prueba: `prueba1_correcta.png` y `prueba1_mensajes.png`, `prueba2_stock_insuficiente.png` y `prueba2_mensajes.png`, `prueba3_atomicidad.png` y `prueba3_mensajes.png`, `prueba4_caso_limite.png` y `prueba4_mensajes.png`, y `resumen_final.png`.
 
 Aclaracion: Las pruebas 5 y 6 se ejecutaron después de volver a correr el bloque de reseteo, por eso la venta de la prueba 5 también recibe el ticket 1011.
 
