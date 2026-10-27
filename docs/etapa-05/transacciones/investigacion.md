@@ -27,7 +27,7 @@ Las transacciones garantizan las propiedades **ACID**:
 |---|---|
 | `BEGIN TRANSACTION` | Abre la transacción: lo que sigue todavía no es definitivo |
 | `COMMIT TRANSACTION` | Confirma todos los cambios |
-| `ROLLBACK TRANSACTION` | Deshace todos los cambios desde el `BEGIN` |
+| `ROLLBACK TRANSACTION` | Deshace todos los cambios desde el `BEGIN`(con transacciones anidadas, deshace hasta la más externa) |
 | `BEGIN TRY … BEGIN CATCH` | Captura cualquier error y salta al bloque de manejo |
 | `THROW` | Lanza un error a propósito (se usa para las validaciones) |
 | `@@TRANCOUNT` | Indica cuántas transacciones hay abiertas; se consulta antes de hacer `ROLLBACK` |
@@ -83,3 +83,31 @@ Script: `scripts.sql`. Evidencias: carpeta `evidencias/`. Las pruebas se ejecuta
 **Observación sobre la numeración:** la prueba 4 recibe el ticket **1012**, el siguiente al 1011, aunque entre ambas hubo dos operaciones revertidas. No quedaron huecos.
 
 **Capturas:** `evidencias/prueba1_correcta.png`, `prueba2_stock_insuficiente.png`, `prueba3_atomicidad.png`, `prueba4_caso_limite.png`.
+
+Aclaracion: Las pruebas 5 y 6 se ejecutaron después de volver a correr el bloque de reseteo, por eso la venta de la prueba 5 también recibe el ticket 1011.
+
+## 6. Transacciones anidadas
+
+En SQL Server se pueden abrir transacciones dentro de otras. La función `@@TRANCOUNT` cuenta cuántas hay abiertas. Dos reglas:
+
+- Cada `BEGIN TRANSACTION` suma 1 al contador y cada `COMMIT` interno resta 1, **sin confirmar nada definitivo**. Los cambios se confirman recién con el `COMMIT` de la transacción más externa.
+- Un `ROLLBACK` deshace **todo** hasta la transacción más externa y deja el contador en 0, aunque las transacciones internas ya hubieran hecho `COMMIT`.
+
+**Caso aplicado:** venta de dos productos. La venta es la transacción externa y cada línea de detalle (insertar el detalle y descontar el stock) es una transacción interna.
+
+**Demostración básica del contador** (sin modificar datos): al abrir la externa el contador vale 1, al abrir la interna 2, tras el `COMMIT` interno vuelve a 1 y tras el `ROLLBACK` queda en 0.
+
+| Prueba | Datos | Resultado obtenido | Qué demuestra |
+|---|---|---|---|
+| 5. Venta de 2 productos | Producto 3 × 5 y producto 6 × 10 | `@@TRANCOUNT`: 1, 2, 1, 2, 1 y `COMMIT` final con 0. Ticket 1011 (subtotal 22000,00, IVA 4620,00, total 26620,00) con 2 líneas de detalle. Stock: producto 3 de 80 a 75 y producto 6 de 35 a 25 | Los `COMMIT` internos solo bajan el contador. Todo se confirma con el `COMMIT` externo |
+| 6. Falla en la segunda línea | Producto 3 × 5 y producto 6 × 40 (stock 35) | La línea 1 hace su `COMMIT` interno (contador 1). La línea 2 viola `CK_Producto_StockActualPositivo` (contador 2 antes del `ROLLBACK`, 0 después). No queda ticket ni detalle. Stock del producto 3 de nuevo en 80 y del 6 en 35 | Un `ROLLBACK` deshace también lo que las transacciones internas ya habían "confirmado" |
+
+**Capturas:** `evidencias/anidadas_trancount.png`, `anidadas_prueba5_resultados.png`, `anidadas_prueba5_mensajes.png`, `anidadas_prueba6_resultados.png`, `anidadas_prueba6_mensajes.png`.
+
+## 7. Conclusiones
+
+- Registrar una venta modifica tres tablas (VENTA, DETALLE_VENTA y PRODUCTO). Con una transacción, todas cambian juntas o ninguna cambia. En las pruebas 2, 3 y 6 el `ROLLBACK` dejó la base exactamente como estaba.
+- Las validaciones previas (por ejemplo, stock insuficiente) frenan la venta antes de operar. El `CHECK` de la tabla actúa como segunda defensa y la prueba 3 mostró que el `ROLLBACK` también deshace operaciones que ya se habían ejecutado.
+- Calcular el número de ticket dentro de la transacción evitó huecos en la numeración: tras dos operaciones revertidas, la siguiente venta tomó el número consecutivo.
+- En transacciones anidadas, el `COMMIT` interno no es definitivo. Solo importa el `COMMIT` de la transacción más externa, y un `ROLLBACK` en cualquier nivel deshace todo. Por eso, en una venta de varios productos, una línea que falla anula la venta completa.
+- **Limitaciones:** las pruebas se hicieron en una sola sesión, por lo que no se comprobó el comportamiento con ventas simultáneas. Para deshacer solo una parte de una transacción habría que usar puntos de control (`SAVE TRANSACTION`), que no se implementaron.
