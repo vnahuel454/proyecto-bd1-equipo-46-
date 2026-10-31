@@ -17,7 +17,7 @@ El trigger realiza un `JOIN` entre ambas estructuras usando el campo `id_product
 ## 4. Demostración y Evidencias de Funcionamiento
 
 ### Paso A: Estado inicial de las tablas
-Antes de la prueba, verificamos el precio vigente del producto y confirmamos que la tabla de auditoría se encuentra totalmente vacía.
+Antes de la prueba, verificamos el precio vigente del producto dentro del sistema.
 ![Estado Inicial](./evidencias/evidencia1_antes.png)
 
 ### Paso B: Ejecución del cambio de precio (UPDATE)
@@ -25,5 +25,5 @@ Se procede a actualizar el valor de la columna `precio_actual` simulando una act
 ![Ejecución del Update](./evidencias/evidencia2_update.png)
 
 ### Paso C: Verificación del cambio automatico por parte del Trigger
-Consultamos la tabla `AUDITORIA_PRODUCTO`. Se observa que el trigger capturó los estados en memoria y guardó el registro histórico con el sello de tiempo y el usuario.
+y por último consultamos la tabla `AUDITORIA_PRODUCTO`. Se observa que el trigger se ejecutó de forma automática y capturó los estados en memoria donde se ve el precio de antes y el de despuès.
 ![Registro de Auditoría Generado](./evidencias/evidencia3_despues.png)
