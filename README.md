@@ -83,8 +83,7 @@ proyecto-bd1-equipo-46/
 ├── sql/
 │   ├── ddl/               Definición de estructuras y restricciones
 │   ├── dml/               Carga y poblado de datos de prueba
-│   ├── consultas/         Scripts de consultas y reportes
-│   └── tecnico/           Procedimientos, funciones y triggers
+│   └── consultas/         Scripts de consultas y reportes
 └── README.md
 ```
 
@@ -98,7 +97,7 @@ proyecto-bd1-equipo-46/
 | 02 | Modelo conceptual, relacional y normalización (3FN) | ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square) |
 | 03 | Implementación de la base de datos (DDL y DML) | ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square) |
 | 04 | Consultas del negocio y casos de uso | ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square) |
-| 05 | Temas técnicos (procedimientos, triggers, seguridad) | ![Pendiente](https://img.shields.io/badge/-Pendiente-9E9E9E?style=flat-square) |
+| 05 | Temas técnicos (procedimientos, triggers, seguridad) | ![Completa](https://img.shields.io/badge/-Completa-2E7D32?style=flat-square) |
 
 ---
 
@@ -160,6 +159,26 @@ Scripts SQL:
 - [Consulta 2b (consulta_ventas_por_categoria.sql)](sql/consultas/consulta_ventas_por_categoria.sql)
 - [Consulta 3a (03a_clientes_compras_mayores_5000.sql)](sql/consultas/03a_clientes_compras_mayores_5000.sql)
 - [Consulta 3b (03b_consulta_avanzada_subconsulta.sql)](sql/consultas/03b_consulta_avanzada_subconsulta.sql)
+
+</details>
+
+<details>
+<summary>Etapa 05: Temas técnicos y optimización (SQL Server)</summary>
+<br>
+
+Investigaciones técnicas:
+- [Procedimientos y funciones almacenadas](docs/etapa-05/Procedimientos_Funciones/investigacion.md)
+- [Manejo de transacciones](docs/etapa-05/transacciones/investigacion.md)
+- [Triggers de auditoría](docs/etapa-05/triggers_%20auditoria/investigacion.md)
+- [Seguridad y roles](docs/etapa-05/seguridad/investigacion.md)
+- [Optimización de consultas e índices](docs/etapa-05/Optimización_consultas/investigacion.md)
+
+Scripts SQL:
+- [Procedimientos y funciones (scripts.sql)](docs/etapa-05/Procedimientos_Funciones/scripts.sql)
+- [Transacciones (scripts.sql)](docs/etapa-05/transacciones/scripts.sql)
+- [Triggers de auditoría (scripts.sql)](docs/etapa-05/triggers_%20auditoria/scripts.sql)
+- [Seguridad y permisos (scripts.sql)](docs/etapa-05/seguridad/scripts.sql)
+- [Optimización de consultas (scripts.sql)](docs/etapa-05/Optimización_consultas/scripts.sql)
 
 </details>
 
