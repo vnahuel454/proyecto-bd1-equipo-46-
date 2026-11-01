@@ -1,5 +1,5 @@
 
-USE SupermercadoElSol_test;
+USE SupermercadoElSol;
 GO
 
 -- ============================================================================

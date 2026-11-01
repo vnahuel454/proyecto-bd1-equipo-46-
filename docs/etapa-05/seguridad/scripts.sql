@@ -203,4 +203,5 @@ GO
 DELETE FROM dbo.SE_ABONA_CON WHERE numero_ticket = 9901;
 DELETE FROM dbo.DETALLE_VENTA WHERE numero_ticket = 9901;
 DELETE FROM dbo.VENTA WHERE numero_ticket = 9901;
+UPDATE dbo.PRODUCTO SET stock_actual = stock_actual - 50 WHERE id_producto = 2;
 GO
